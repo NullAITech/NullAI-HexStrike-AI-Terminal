@@ -64,11 +64,12 @@ Ensure your system is updated and the core HexStrike engine is installed:
 ```bash
 sudo apt update && sudo apt install hexstrike-ai podman
 ```
-2. Configure the "Brain" (LocalAI)
+### 2. Configure the "Brain" (LocalAI)
 
 We run LocalAI as a Podman Quadlet to ensure it starts as a system service.
 
-    Create the model directory:
+## Create the model directory:
+
 ```bash
 
 mkdir -p ~/nullai_001/framework/models
@@ -97,7 +98,7 @@ Activate:
     systemctl --user start localai.service
     sudo loginctl enable-linger $USER
 ```
-3. Setup the Backend Bridge
+### 3. Setup the Backend Bridge
 ```bash
 
 cd ~/nullai_001/backend
@@ -105,7 +106,7 @@ python3 -m venv venv
 source venv/bin/activate
 pip install fastapi uvicorn requests pydantic
 ```
-4. Setup the UI
+### 4. Setup the UI
 ```bash
 
 cd ~/nullai_001/ui
