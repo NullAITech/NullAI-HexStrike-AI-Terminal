@@ -39,9 +39,22 @@ const TerminalPage = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* Control Bar */}
       <div style={{ padding: '20px', display: 'flex', gap: '15px', borderBottom: '1px solid var(--border-color)' }}>
-        <select value={tool} onChange={(e) => setTool(e.target.value)} style={{ background: '#000', color: 'red', border: '1px solid red' }}>
-          <option value="nmap">Nmap Scan</option>
-          <option value="sherlock">Sherlock OSINT</option>
+        <select 
+          value={tool} 
+          onChange={(e) => setTool(e.target.value)} 
+          style={{ background: '#000', color: 'red', border: '1px solid red' }}
+        >
+          <optgroup label="OSINT & Recon">
+            <option value="emailharvester">EmailHarvester (Domain OSINT)</option>
+            <option value="sherlock">Sherlock (Social Search)</option>
+            <option value="nmap">Nmap (Network Scan)</option>
+            <option value="autorecon">AutoRecon (Enumeration)</option>
+          </optgroup>
+          <optgroup label="Vulnerability & Web">
+            <option value="nikto">Nikto (Web Scan)</option>
+            <option value="sqlmap">SQLmap (DB Injection)</option>
+            <option value="trufflehog">TruffleHog (Secret Leakage)</option>
+          </optgroup>
         </select>
         <input 
           type="text" placeholder="TARGET IP/DOMAIN" value={target}

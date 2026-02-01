@@ -9,17 +9,28 @@ class HexBridge:
         # Use a session for better connection stability on Parrot
         self.session = requests.Session()
 
+    # In backend/core/hex_bridge.py
+
     def execute_and_analyze(self, tool, target):
-        cmd = f"{tool} {target}"
-        if tool == "sherlock":
-            cmd = f"sherlock --print-found --folder /tmp {target}"
+        # Mapping tool names to their Parrot OS 7 specific command structures
+        cmd_map = {
+            "emailharvester": f"emailharvester -d {target} -e all -l 500",
+            "nikto": f"nikto -h {target}",
+            "sqlmap": f"sqlmap -u {target} --batch --banner",
+            "autorecon": f"autorecon {target} --single-target",
+            "trufflehog": f"trufflehog filesystem {target}",
+            "sherlock": f"sherlock --print-found --folder /tmp {target}"
+        }
+
+        # Default to simple tool + target if not in map
+        cmd = cmd_map.get(tool.lower(), f"{tool} {target}")
 
         try:
-            # 1. Hit HexStrike
+            # Execute via HexStrike Engine
             tool_resp = self.session.post(f"{self.hex_url}/command", json={"command": cmd}, timeout=310).json()
             output = tool_resp.get("output", tool_resp.get("stdout", "No output."))
 
-            # 2. Hit LocalAI
+            # Analyze with LocalAI Core
             ai_analysis = self.ask_local_ai(tool, output)
 
             return {"output": output, "analysis": ai_analysis}
@@ -31,8 +42,8 @@ class HexBridge:
         url = f"{self.ai_url}/chat/completions"
         payload = {
             "model": "gpt-4",
-            "messages": [{"role": "user", "content": f"Analyze: {tool_output[:1000]}"}],
-            "max_tokens": 150
+            "messages": [{"role": "user", "content": f"Analyze: {tool_output[:3000]}"}],
+            "max_tokens": 1150
         }
 
         try:
