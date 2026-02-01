@@ -1,4 +1,5 @@
 # NullAI HexStrike Terminal 🧪🔴
+# -------------------------------------------
 # UPDATE (2-1-26)
 ## 🧠 Local Intelligence Configuration
 
@@ -26,7 +27,7 @@ After updating the YAML, you **must** restart the LocalAI service:
 \`\`\`bash
 systemctl --user restart localai.service
 \`\`\`
-
+# ------------------------------------------------------------------------
 > **Part of the NullAI.tech Intelligence Suite.**
 > An advanced, AI-augmented offensive security dashboard built for Parrot OS 7 (Echo). This platform bridges the gap between raw tool output and autonomous intelligence.
 
@@ -45,7 +46,7 @@ This project implements a "Blood-Red" offensive pipeline using a four-tier archi
 
 ## 🚦 System Port Mapping
 
-To avoid conflicts with existing services (like n8n or Mixpost), this project uses the following port standards:
+To avoid conflicts with existing services, this project uses the following port standards:
 
 | Service | Port | Description |
 | :--- | :--- | :--- |
@@ -53,7 +54,6 @@ To avoid conflicts with existing services (like n8n or Mixpost), this project us
 | **Backend** | `8000` | FastAPI Bridge (Python) |
 | **HexStrike** | `8888` | HexStrike AI MCP Server |
 | **LocalAI** | `8090` | Local Intelligence Core (Podman) |
-| **Automation** | `5678` | n8n (Internal Automation) |
 
 ---
 
