@@ -68,13 +68,13 @@ sudo apt update && sudo apt install hexstrike-ai podman
 
 We run LocalAI as a Podman Quadlet to ensure it starts as a system service.
 
-## Create the model directory:
+### Create the model directory:
 
 ```bash
 
 mkdir -p ~/nullai_001/framework/models
 ```
-Create the service file: 
+### Create the service file: 
 ```bash
 mkdir -p ~/.config/containers/systemd vim ~/.config/containers/systemd/localai.container
 ```
@@ -91,7 +91,7 @@ Restart=always
 [Install]
 WantedBy=default.target
 ```
-Activate:
+### Activate:
 ```bash
 
     systemctl --user daemon-reload
