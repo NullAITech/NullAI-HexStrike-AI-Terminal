@@ -1,4 +1,31 @@
 # NullAI HexStrike Terminal 🧪🔴
+# UPDATE (2-1-26)
+## 🧠 Local Intelligence Configuration
+
+The "Pro-Level" analysis requires specific model settings to handle dense security logs without truncation.
+
+### 1. Model Setup
+Download the required GGUF and place it in your `models/` directory:
+- **Model:** `Hermes-3-Llama-3.2-3B-Q4_K_M.gguf`
+- **Alias:** `gpt-4`
+
+### 2. Model YAML Configuration
+Create or update `~/nullai_001/framework/models/gpt-4.yaml` with these enhanced parameters to prevent the "mid-sentence cutoff":
+
+\`\`\`yaml
+name: gpt-4
+parameters:
+    model: Hermes-3-Llama-3.2-3B-Q4_K_M.gguf
+    temperature: 0.2     # Low for technical accuracy
+    max_tokens: 2000     # Generation ceiling
+context_size: 8192       # Expanded window for large scan logs
+\`\`\`
+
+### 3. Apply Changes
+After updating the YAML, you **must** restart the LocalAI service:
+\`\`\`bash
+systemctl --user restart localai.service
+\`\`\`
 
 > **Part of the NullAI.tech Intelligence Suite.**
 > An advanced, AI-augmented offensive security dashboard built for Parrot OS 7 (Echo). This platform bridges the gap between raw tool output and autonomous intelligence.
