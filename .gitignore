@@ -1,0 +1,65 @@
+# Gitignore for NullAI HexStrike Dashboard
+
+# Environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Virtual Environments (Python)
+venv/
+.venv/
+env/
+python_env/
+build/
+develop/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node Modules (React Frontend)
+node_modules/
+jspm_packages/
+.npm
+.eslintcache
+.stylelintcache
+.parcel-cache
+.next
+out
+.nuxt
+dist
+
+# Framework Specific (AI Models)
+# We ignore the entire framework folder to prevent 10GB+ models from being committed
+framework/
+models/
+*.gguf
+*.bin
+*.onnx
+
+# System Files & Logs
+.DS_Store
+Thumbs.db
+*.log
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.project
+.settings/

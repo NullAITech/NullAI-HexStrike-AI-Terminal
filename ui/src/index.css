@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&display=swap');
+
+:root {
+  --blood-red: #ff0000;
+  --bg-black: #050505;
+  --terminal-bg: #0a0a0a;
+  --border-color: #440000;
+  --text-primary: #e0e0e0;
+}
+
+body, html, #root {
+  margin: 0;
+  height: 100vh;
+  background-color: var(--bg-black);
+  color: var(--text-primary);
+  font-family: 'Fira Code', monospace;
+  overflow: hidden;
+}
+
+.terminal-pane {
+  background: var(--terminal-bg);
+  border: 1px solid var(--border-color);
+  padding: 15px;
+  overflow-y: auto;
+  height: 100%;
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--blood-red); }

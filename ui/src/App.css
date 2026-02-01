@@ -1,0 +1,37 @@
+.terminal-window {
+  background: rgba(10, 10, 10, 0.95);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+  border-radius: 5px;
+  position: relative;
+}
+
+.terminal-header {
+  background: #1a0000;
+  padding: 8px 15px;
+  border-bottom: 1px solid #440000;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #ff5555;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff0000;
+  box-shadow: 0 0 8px #ff0000;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.executing {
+  animation: pulse 1.5s infinite;
+  color: var(--blood-red);
+}
