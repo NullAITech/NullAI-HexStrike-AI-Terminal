@@ -63,19 +63,21 @@ To avoid conflicts with existing services, this project uses the following port 
 Ensure your system is updated and the core HexStrike engine is installed:
 ```bash
 sudo apt update && sudo apt install hexstrike-ai podman
-
+```
 2. Configure the "Brain" (LocalAI)
 
 We run LocalAI as a Podman Quadlet to ensure it starts as a system service.
 
     Create the model directory:
-    Bash
+```bash
 
 mkdir -p ~/nullai_001/framework/models
-
-Create the service file: mkdir -p ~/.config/containers/systemd vim ~/.config/containers/systemd/localai.container
-Ini, TOML
-
+```
+Create the service file: 
+```bash
+mkdir -p ~/.config/containers/systemd vim ~/.config/containers/systemd/localai.container
+```
+```bash
 [Container]
 Image=docker.io/localai/localai:latest-aio-cpu
 ContainerName=local-ai
@@ -87,47 +89,48 @@ Restart=always
 
 [Install]
 WantedBy=default.target
-
+```
 Activate:
-Bash
+```bash
 
     systemctl --user daemon-reload
     systemctl --user start localai.service
     sudo loginctl enable-linger $USER
-
+```
 3. Setup the Backend Bridge
-Bash
+```bash
 
 cd ~/nullai_001/backend
 python3 -m venv venv
 source venv/bin/activate
 pip install fastapi uvicorn requests pydantic
-
+```
 4. Setup the UI
-Bash
+```bash
 
 cd ~/nullai_001/ui
 npm install
-
+```
 🛠️ Running the Framework
 
 Start the services in this specific order:
 
     HexStrike Server:
-    Bash
+```bash
 
 hexstrike_server --port 8888
-
+```
 FastAPI Backend:
-Bash
+
+```bash
 
 python3 main.py
-
+```
 React Dashboard:
-Bash
+```bash
 
     npm run dev
-
+```
 🧠 Offensive Intelligence Features
 
     Split-Pane Execution: View raw STDOUT from tools on the left and LocalAI reasoning on the right.
