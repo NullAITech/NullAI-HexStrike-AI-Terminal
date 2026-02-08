@@ -12,15 +12,36 @@ class HexBridge:
     # In backend/core/hex_bridge.py
 
     def execute_and_analyze(self, tool, target):
-        # Mapping tool names to their Parrot OS 7 specific command structures
         cmd_map = {
-            "emailharvester": f"emailharvester -d {target} -e all -l 500",
+            # OSINT
+            "emailharvester": f"emailharvester -d {target}",
+            "sublist3r": f"sublist3r -d {target}",
+            "photon": f"photon -u http://{target} --regex",
+            
+            # Web
             "nikto": f"nikto -h {target}",
+            "whatweb": f"whatweb -a 3 {target}",
+            "gobuster": f"gobuster dir -u http://{target} -w /usr/share/wordlists/dirb/common.txt",
+            
+            # Infrastructure
             "sqlmap": f"sqlmap -u {target} --batch --banner",
-            "autorecon": f"autorecon {target} --single-target",
-            "trufflehog": f"trufflehog filesystem {target}",
-            "sherlock": f"sherlock --print-found --folder /tmp {target}"
+            "snmpwalk": f"snmpwalk -c public -v2c {target}",
+            "searchsploit": f"searchsploit {target}",
+            "nmap": f"nmap -sV -sC {target}",
+            "dmitry": f"dmitry -winsepf {target} -o /tmp/dmitry.txt",
+            "dnsenum": f"dnsenum {target}",
+            "amass": f"amass enum -d {target}",
+            "fierce": f"fierce --domain {target}",
+            "wapiti": f"wapiti -u http://{target} --flush-session -f txt",
+            "commix": f"commix --url http://{target} --batch",
+            "wpscan": f"wpscan --url http://{target} --no-update",
+            "joomscan": f"joomscan -u http://{target}",
+            "gobuster": f"gobuster dir -u http://{target} -w /usr/share/wordlists/dirb/common.txt",
+            "wafw00f": f"wafw00f {target}",
+            "davtest": f"davtest -url http://{target}",
+            "searchsploit": f"searchsploit {target}"
         }
+        
 
         # Default to simple tool + target if not in map
         cmd = cmd_map.get(tool.lower(), f"{tool} {target}")

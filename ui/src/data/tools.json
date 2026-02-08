@@ -1,0 +1,156 @@
+[
+  {
+    "id": "nmap",
+    "name": "Nmap Network Scan",
+    "category": "Recon & OSINT",
+    "info": "The standard for network discovery and security auditing. Scans ports and detects OS versions.",
+    "link": "https://nmap.org/book/man.html"
+  },
+  {
+    "id": "emailharvester",
+    "name": "EmailHarvester",
+    "category": "Recon & OSINT",
+    "info": "Scrapes search engines (Google, Bing, PGP) to find email addresses associated with a domain.",
+    "link": "https://github.com/maldevel/EmailHarvester"
+  },
+  {
+    "id": "dmitry",
+    "name": "DMitry",
+    "category": "Recon & OSINT",
+    "info": "Deepmagic Information Gathering Tool. Gathers subdomains, emails, uptime info, and tcp port scan.",
+    "link": "https://github.com/jaygreig86/dmitry"
+  },
+  {
+    "id": "dnsenum",
+    "name": "DNSenum",
+    "category": "Recon & OSINT",
+    "info": "Multithreaded script to enumerate DNS information of a domain and discover non-contiguous ip blocks.",
+    "link": "https://github.com/fwaeytens/dnsenum"
+  },
+  {
+    "id": "amass",
+    "name": "OWASP Amass",
+    "category": "Recon & OSINT",
+    "info": "In-depth attack surface mapping and asset discovery using open source information gathering.",
+    "link": "https://github.com/owasp-amass/amass"
+  },
+  {
+    "id": "sublist3r",
+    "name": "Sublist3r",
+    "category": "Recon & OSINT",
+    "info": "Fast sub-domain enumeration tool using OSINT engines like Baidu, Yahoo, and VirusTotal.",
+    "link": "https://github.com/aboul3la/Sublist3r"
+  },
+  {
+    "id": "photon",
+    "name": "Photon Crawler",
+    "category": "Recon & OSINT",
+    "info": "Incredibly fast crawler designed for OSINT. Extracts URLs, emails, social accounts, and files.",
+    "link": "https://github.com/s0md3v/Photon"
+  },
+  {
+    "id": "sherlock",
+    "name": "Sherlock",
+    "category": "Recon & OSINT",
+    "info": "Hunts down social media accounts by username across 300+ social networks.",
+    "link": "https://github.com/sherlock-project/sherlock"
+  },
+  {
+    "id": "fierce",
+    "name": "Fierce DNS",
+    "category": "Recon & OSINT",
+    "info": "DNS reconnaissance tool for locating non-contiguous IP space.",
+    "link": "https://github.com/mschwager/fierce"
+  },
+  {
+    "id": "autorecon",
+    "name": "AutoRecon",
+    "category": "Recon & OSINT",
+    "info": "Multi-threaded reconnaissance tool that automates service enumeration.",
+    "link": "https://github.com/Tib3rius/AutoRecon"
+  },
+  {
+    "id": "nikto",
+    "name": "Nikto Web Scan",
+    "category": "Vulnerability & Web",
+    "info": "Web server scanner that tests for dangerous files, outdated versions, and config issues.",
+    "link": "https://github.com/sullo/nikto"
+  },
+  {
+    "id": "wapiti",
+    "name": "Wapiti",
+    "category": "Vulnerability & Web",
+    "info": "Web application vulnerability scanner that audits the security of your websites (Black-box).",
+    "link": "https://wapiti.sourceforge.io/"
+  },
+  {
+    "id": "sqlmap",
+    "name": "SQLMap Injection",
+    "category": "Vulnerability & Web",
+    "info": "Automatic SQL injection and database takeover tool. Detects and exploits flaws.",
+    "link": "https://sqlmap.org/"
+  },
+  {
+    "id": "commix",
+    "name": "Commix",
+    "category": "Vulnerability & Web",
+    "info": "Automated all-in-one OS command injection and exploitation tool.",
+    "link": "https://github.com/commixproject/commix"
+  },
+  {
+    "id": "whatweb",
+    "name": "WhatWeb",
+    "category": "Vulnerability & Web",
+    "info": "Next-gen web scanner. Identifies CMS, blogging platforms, statistic/analytics packages.",
+    "link": "https://github.com/urbanadventurer/WhatWeb"
+  },
+  {
+    "id": "wpscan",
+    "name": "WPScan",
+    "category": "Vulnerability & Web",
+    "info": "WordPress security scanner. Checks for vulnerable plugins, themes, and configuration backups.",
+    "link": "https://wpscan.com/wordpress-security-scanner"
+  },
+  {
+    "id": "joomscan",
+    "name": "JoomScan",
+    "category": "Vulnerability & Web",
+    "info": "OWASP Joomla! Vulnerability Scanner. Detects firewall misconfigs and vulnerable components.",
+    "link": "https://github.com/rezasp/joomscan"
+  },
+  {
+    "id": "gobuster",
+    "name": "Gobuster Dir",
+    "category": "Vulnerability & Web",
+    "info": "Directory/File, DNS and VHost busting tool written in Go. Fast and lightweight.",
+    "link": "https://github.com/OJ/gobuster"
+  },
+  {
+    "id": "wafw00f",
+    "name": "WAFW00F",
+    "category": "Vulnerability & Web",
+    "info": "Identifies and fingerprints Web Application Firewall (WAF) products protecting a website.",
+    "link": "https://github.com/EnableSecurity/wafw00f"
+  },
+  {
+    "id": "davtest",
+    "name": "DavTest",
+    "category": "Vulnerability & Web",
+    "info": "Tests WebDAV enabled servers by uploading test executable files.",
+    "link": "https://github.com/cldrn/davtest"
+  },
+  {
+    "id": "trufflehog",
+    "name": "TruffleHog",
+    "category": "Vulnerability & Web",
+    "info": "Searches for secrets, API keys, and credentials specifically in files and repositories.",
+    "link": "https://github.com/trufflesecurity/trufflehog"
+  },
+  {
+    "id": "searchsploit",
+    "name": "SearchSploit",
+    "category": "Exploitation",
+    "info": "Command line search tool for Exploit-DB. Finds exploits for identified software versions.",
+    "link": "https://www.exploit-db.com/searchsploit"
+  }
+]
