@@ -4,15 +4,15 @@
 
 ---
 
-## Features
+## ◈ Features
 
 ### Neural Intelligence Core
-- **Real-Time Analysis** — Every tool output is streamed through a neural engine that identifies vulnerabilities and maps them to the MITRE ATT&CK framework
-- **Sovereign Playbooks** — Pre-defined attack chains (e.g., `Full Recon` → `Web Vuln` → `Cred Blast`) that execute tools sequentially
-- **Neural Autopilot** — Self-driving mode where the AI analyzes the current state and automatically triggers the next logical tool
-- **Target Intelligence Persistence** — Local storage of target profiles (`intel.json`), ensuring intelligence gathered in one session informs the next
+- **Real-Time Analysis** — Every tool output streamed through neural engine mapping vulnerabilities to MITRE ATT&CK
+- **Sovereign Playbooks** — Pre-defined attack chains: Recon → Web Vuln → Cred Blast → Exfil
+- **Neural Autopilot** — Self-driving mode at 80% compromise threshold
+- **Target Intelligence Persistence** — Local `intel.json` profile storage across sessions
 
-### Sovereign Arsenal (40+ Tools)
+### Sovereign Arsenal (156 Tools)
 - **AI Red Teaming**: `garak`, `llmfuzzer`, `vigil`, `iatelligence`
 - **Network Recon**: `nmap`, `masscan`, `amass`, `subfinder`, `rustscan`
 - **Web Exploitation**: `sqlmap`, `nikto`, `gobuster`, `ffuf`, `wapiti`, `xsstrike`, `nuclei`
@@ -24,14 +24,19 @@
 
 ### Operator Interface
 - **Ghost Byte Aesthetic** — Void-Red/Blood-Red/Obsidian CRT theme, nullai.tech brand
-+ **Ghost Byte Aesthetic** — Void-Red/Blood-Red/Obsidian CRT theme, nullai.tech brand
-- **Live-Wire Streaming** — Zero-latency output via Server-Sent Events (SSE)
-- **Command Palette** — Fast-access tool execution via `Ctrl + K`
-- **Sovereign Reporting** — One-click export of target intelligence into Markdown/HTML reports
+- **Live-Wire Streaming** — Zero-latency SSE output
+- **Command Palette** — `Ctrl+K` fast-access tool execution with search, recent commands, keyboard nav
+- **Sovereign Reporting** — MD/JSON/CSV export with HTML reports
+- **Tool Detail Modal** — Click any tool for full info: description, usefulness rating, difficulty, tags
+- **Favorites** — Star tools to bookmark, persisted in localStorage
+- **Live Output Viewer** — Real-time strike output panel with auto-scroll
+- **Toast Notifications** — Color-coded green/red/purple, auto-dismiss 5s
+- **Accessibility** — ARIA labels, `:focus-visible`, skip-to-content, `prefers-reduced-motion`
+- **Responsive** — 3 breakpoints, slide-out drawers, 44px touch targets
 
 ---
 
-## Architecture
+## ◈ Architecture
 
 | Layer | Technology |
 |-------|-----------|
@@ -42,87 +47,85 @@
 
 ---
 
-## Installation
+## ◈ Quick Start
 
-### Prerequisites
-- Python 3.11+
-- Node.js 18+
-- Git
-
-### 1. Clone the Repository
 ```bash
 git clone https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal.git
 cd NullAI-HexStrike-AI-Terminal
+
+# Initialize backend
+chmod +x setup-tools.sh && ./setup-tools.sh
+
+# Launch Neural Core (LocalAI)
+chmod +x setup-localai.sh && ./setup-localai.sh
+
+# Start UI
+chmod +x setup-ui.sh && ./setup-ui.sh
 ```
 
-### 2. Initialize the Backend
-```bash
-chmod +x setup-backend.sh
-./setup-backend.sh
-```
-
-### 3. Launch the Neural Core (LocalAI)
-```bash
-chmod +x setup-localai.sh
-./setup-localai.sh
-```
-
-### 4. Start the UI
-```bash
-chmod +x setup-ui.sh
-./setup-ui.sh
-```
+UI opens at `http://localhost:5173`, API at `http://localhost:8000`, LocalAI at `http://localhost:8090`.
 
 ---
 
-## Usage
+## ◈ Usage
 
-1. **Set Target** — Enter an IP or domain in the `TARGET_VECTOR` bar
-2. **Select Vector** — Choose a single tool or a **Sovereign Playbook** for automated chaining
-3. **Execute** — Click `EXECUTE STRIKE`
-4. **Analyze** — Watch `RAW_OUTPUT` stream and `NEURAL_ANALYSIS` vulnerability matrix
-5. **Automate** — Toggle `AUTOPILOT` to let the AI drive the compromise
-6. **Export** — Click `EXPORT REPORT` to save findings
+1. **Set Target** — Enter IP/domain in `TARGET_VECTOR` bar
+2. **Select Vector** — Single tool or Sovereign Playbook for automated chaining
+3. **Execute Strike** — Watch real-time neural analysis
+4. **Auto-Pilot** — Toggle autopilot at 80% compromise threshold
+5. **Export** — MD/JSON/CSV report download
 
 ---
 
-## API Endpoints
+## ◈ Tool Categories (11 groups)
+
+| Category | Count | Tools |
+|----------|-------|-------|
+| Exploit | 48 | metasploit, sqlmap, hydra, nikto, etc. |
+| Web | 32 | gobuster, ffuf, wapiti, xsstrike, nuclei, etc. |
+| Recon | 30 | nmap, masscan, amass, subfinder, rustscan, etc. |
+| Post-Exploit | 14 | bettercap, sliver, mimikatz, etc. |
+| OSINT | 9 | theharvester, shodan, recondev, dnsenum, etc. |
+| Documentation | 6 | Rogue_Article, docs, etc. |
+| Neural | 5 | garak, llmfuzzer, vigil, etc. |
+| Password | 5 | hashcat, john, cewl, etc. |
+| Wordlist | 3 | rockyou, seclists, etc. |
+| Container | 2 | trivy, kubescape, etc. |
+| Cloud | 2 | pacu, scoutsuite, etc. |
+
+Each tool has: `usefulness` (1-10), `difficulty` (beginner/intermediate/advanced), `tags` (4-5 keywords), `category_order` (1-11).
+
+---
+
+## ◈ API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/analytics` | Returns strike statistics, tool success rates, top targets |
-| POST | `/api/report/generate` | Generate an HTML report for a target (or all targets) |
-| GET | `/api/report/download` | Download a generated report by ID or latest |
-
-### Analytics Response
-```json
-{
-  "total_strikes": 42,
-  "success_rate_by_tool": {"nmap": 95.2, "sqlmap": 87.5},
-  "avg_compromise_time_seconds": 12.4,
-  "top_targets": [{"target": "192.168.1.1", "strikes": 10}],
-  "unique_tools": 8,
-  "unique_targets": 5
-}
-```
+| GET | `/api/ping` | Target reachability check |
+| GET | `/api/session/list` | List saved sessions |
+| POST | `/api/session/save` | Save target session |
+| POST | `/api/session/load` | Load target session |
+| POST | `/api/portscan` | Port scanner (nmap) |
+| POST | `/api/strike` | Execute tool strike |
+| GET | `/api/templates` | Command templates CRUD |
+| GET | `/api/fingerprint` | Target fingerprinting |
+| POST | `/api/report/generate` | Generate HTML report |
+| GET | `/api/report/download` | Download report |
+| GET | `/api/export-json` | Export as JSON |
+| GET | `/api/export-csv` | Export as CSV |
 
 ---
 
-## Tool Categories
+## ◈ NullAI Brand
 
-| Category | Tools |
-|----------|-------|
-| AI Red Teaming | garak, llmfuzzer, vigil, iatelligence |
-| Network Recon | nmap, masscan, amass, subfinder, rustscan |
-| Web Exploitation | sqlmap, nikto, gobuster, ffuf, wapiti, xsstrike, nuclei |
-| Credential Attacks | hydra, hashcat, john |
-| Post-Exploitation | metasploit, bettercap, sliver |
-| Cloud/Container | pacu, kubescape, trivy, scoutsuite, prowler |
-| OSINT | theharvester, shodan, recondev, dnsenum |
+- **Mark**: ◈ Ghost Byte
+- **Theme**: Void-Red, Blood-Red, Obsidian
+- **Site**: https://nullai.tech
+- **License**: MIT
 
 ---
 
-## Screenshots
+## ◈ Screenshots
 
 > _Screenshots placeholder — add operational screenshots here_
 
