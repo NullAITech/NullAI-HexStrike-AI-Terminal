@@ -1,6 +1,6 @@
-# HexStrike: Sovereign Security Studio
+# ◈ NullAI Security Studio
 
-**NullAI** branding — HexStrike is a high-fidelity, AI-driven red teaming workstation designed for the modern offensive security operator. It transcends traditional tool wrappers by integrating a **Neural Intelligence Core** that not only executes strikes but analyzes them in real-time to map attack paths and automate the compromise lifecycle.
+**NullAI** — Sovereign red teaming workstation powered by the Ghost Byte neural core. 156+ tools, AI-driven attack chaining, real-time threat intelligence. Built on nullai.tech.
 
 ---
 
@@ -20,9 +20,11 @@
 - **Post-Exploitation**: `metasploit`, `bettercap`, `sliver`
 - **Cloud/Container**: `pacu`, `kubescape`, `trivy`, `scoutsuite`, `prowler`
 - **OSINT**: `theharvester`, `shodan`, `recondev`, `dnsenum`
+- **Church of Malware**: `cloudTOWN`, `PEN_toolkit`, `Cerberus`, `ROGUE`
 
 ### Operator Interface
-- **Void-Red Aesthetic** — High-contrast obsidian-and-blood-red theme with CRT scanlines
+- **Ghost Byte Aesthetic** — Void-Red/Blood-Red/Obsidian CRT theme, nullai.tech brand
++ **Ghost Byte Aesthetic** — Void-Red/Blood-Red/Obsidian CRT theme, nullai.tech brand
 - **Live-Wire Streaming** — Zero-latency output via Server-Sent Events (SSE)
 - **Command Palette** — Fast-access tool execution via `Ctrl + K`
 - **Sovereign Reporting** — One-click export of target intelligence into Markdown/HTML reports
