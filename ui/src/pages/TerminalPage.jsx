@@ -53,10 +53,59 @@ const TerminalPage = () => {
   const [fingerprintLoading, setFingerprintLoading] = useState(false);
   // UI accessibility
   const [focusVisible, setFocusVisible] = useState(false);
+  const [toolSearch, setToolSearch] = useState('');
+  const [favorites, setFavorites] = useState([]);
+  const [showToolDetail, setShowToolDetail] = useState(false);
+
+  // Load favorites from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('hexstrike-favorites');
+      if (saved) setFavorites(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  const toggleFavorite = (toolId) => {
+    setFavorites(prev => {
+      const next = prev.includes(toolId) ? prev.filter(id => id !== toolId) : [...prev, toolId];
+      try { localStorage.setItem('hexstrike-favorites', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+
+  const isFavorited = (toolId) => favorites.includes(toolId);
+
+  // Filtered tools by search
+  const filteredTools = toolRegistry.filter(t =>
+    t.name.toLowerCase().includes(toolSearch.toLowerCase()) ||
+    t.id.toLowerCase().includes(toolSearch.toLowerCase()) ||
+    t.tags.some(tag => tag.toLowerCase().includes(toolSearch.toLowerCase()))
+  );
+
+  // Favorited tools sorted first
+  const favoritedTools = filteredTools.filter(t => favorites.includes(t.id));
+  const nonFavoritedTools = filteredTools.filter(t => !favorites.includes(t.id));
+
+  const handleToolClick = (toolId, category) => {
+    setSelectedToolId(toolId);
+    setActiveCategory(category);
+    setShowToolDetail(true);
+  };
+
+  // Command palette: tool search, recent commands, keyboard nav
+  const [cmdResults, setCmdResults] = useState([]);
+  const [cmdActiveIndex, setCmdActiveIndex] = useState(0);
+  const [showRecentOnly, setShowRecentOnly] = useState(false);
+
+  // Live output viewer
+  const [liveOutput, setLiveOutput] = useState([]);
+  const [showLiveOutput, setShowLiveOutput] = useState(false);
 
   const toolRef = useRef(null);
   const aiRef = useRef(null);
   const streamRef = useRef(null);
+  const paletteInputRef = useRef(null);
+  const liveOutputRef = useRef(null);
 
   const currentTool = toolRegistry.find(t => t.id === selectedToolId) || toolRegistry[0];
 
@@ -117,6 +166,49 @@ const TerminalPage = () => {
       return () => clearTimeout(id);
     }
   }, [toolLogs.length, aiLogs.length]);
+
+  // Build palette results: search tools/playbooks, show recent commands when empty
+  useEffect(() => {
+    if (!isCmdPaletteOpen) return;
+    const q = cmdInput.toLowerCase().trim();
+    if (!q) {
+      const recent = cmdHistory.slice(0, 8).map(c => ({ type: 'recent', label: c, id: c }));
+      const tools = toolRegistry.map(t => ({ type: 'tool', label: `${t.id} — ${t.name}`, id: t.id }));
+      const playbooks = playbookRegistry.map(p => ({ type: 'playbook', label: `${p.id} — ${p.name}`, id: p.id }));
+      setCmdResults([...recent, ...tools, ...playbooks]);
+      setShowRecentOnly(true);
+    } else {
+      const matched = [
+        ...toolRegistry.filter(t => t.id.toLowerCase().includes(q) || t.name.toLowerCase().includes(q)).map(t => ({ type: 'tool', label: `${t.id} — ${t.name}`, id: t.id })),
+        ...playbookRegistry.filter(p => p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q)).map(p => ({ type: 'playbook', label: `${p.id} — ${p.name}`, id: p.id })),
+        ...cmdHistory.filter(c => c.toLowerCase().includes(q)).slice(0, 5).map(c => ({ type: 'recent', label: c, id: c })),
+      ];
+      setCmdResults(matched);
+      setShowRecentOnly(false);
+    }
+    setCmdActiveIndex(0);
+  }, [cmdInput, isCmdPaletteOpen, cmdHistory]);
+
+  // Scroll active result into view
+  useEffect(() => {
+    if (!isCmdPaletteOpen) return;
+    const list = document.querySelector('.palette-results');
+    const active = list?.querySelector('.palette-item-active');
+    active?.scrollIntoView({ block: 'nearest' });
+  }, [cmdActiveIndex, isCmdPaletteOpen]);
+
+  // Close palette on Escape
+  useEffect(() => {
+    if (!isCmdPaletteOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setIsCmdPaletteOpen(false);
+        setCmdInput('');
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isCmdPaletteOpen]);
 
   // AI Attack Chain: update stages based on compromise level
   useEffect(() => {
@@ -240,10 +332,15 @@ const addToast = (message, type = 'info') => {
     if (!target || executing) return;
     setExecuting(true);
     setScanProgress(0);
-    
+    setLiveOutput([]);
+    setShowLiveOutput(true);
+
     const timestamp = new Date().toLocaleTimeString();
+    const toolName = playbookRegistry.find(p => p.id === toolId)?.name || toolRegistry.find(t => t.id === toolId)?.name || toolId;
+    addToast(`Strike started: ${toolName}`, 'info');
     setToolLogs(prev => [...prev, `\n[${timestamp}] > ESTABLISHING STREAM FOR ${toolId.toUpperCase()} ON ${target}...`]);
     setAiLogs(prev => [...prev, `\n[${timestamp}] > NEURAL CORE SYNCING...`]);
+    setLiveOutput(prev => [...prev, `[${timestamp}] > ESTABLISHING STREAM FOR ${toolId.toUpperCase()} ON ${target}...`]);
 
     // Scan progress animation
     let progress = 0;
@@ -267,9 +364,11 @@ const addToast = (message, type = 'info') => {
           applyCompromise(line);
           if (line.startsWith('SYSTEM:') || line.startsWith('ENGINE:') || line.startsWith('ERROR:')) {
             setToolLogs(prev => [...prev, line]);
+            setLiveOutput(prev => [...prev, line]);
           } else if (line.startsWith('AI_ANALYSIS:')) {
             const aiText = line.replace('AI_ANALYSIS: ', '');
             setAiLogs(prev => [...prev, aiText]);
+            setLiveOutput(prev => [...prev, `AI: ${aiText}`]);
             addToast('Neural Intelligence: Analysis Complete', 'ai');
             clearInterval(progressInterval);
             setScanProgress(100);
@@ -281,14 +380,17 @@ const addToast = (message, type = 'info') => {
               tool: playbook ? playbook.name : toolId,
               status: 'SUCCESS'
             }, ...prev].slice(0, 10));
+            addToast(`Strike complete: ${toolName}`, 'success');
           } else {
             setToolLogs(prev => [...prev, line]);
+            setLiveOutput(prev => [...prev, line]);
           }
         });
       };
 
       eventSource.onerror = (err) => {
         setToolLogs(prev => [...prev, '[ERROR] Stream disconnected.']);
+        setLiveOutput(prev => [...prev, '[ERROR] Stream disconnected.']);
         eventSource.close();
         setExecuting(false);
         addToast('Stream disconnected', 'error');
@@ -296,6 +398,7 @@ const addToast = (message, type = 'info') => {
 
     } catch (err) {
       setToolLogs(prev => [...prev, `[ERROR] Strike Failed: ${err.message}`]);
+      setLiveOutput(prev => [...prev, `[ERROR] Strike Failed: ${err.message}`]);
       setAiLogs(prev => [...prev, '[ERROR] Connection lost to Neural Core.']);
       setExecuting(false);
       addToast('Strike Failed', 'error');
@@ -351,7 +454,16 @@ const addToast = (message, type = 'info') => {
 
   const handleCmdSubmit = (e) => {
     e.preventDefault();
-    if (cmdInput && target) {
+    const selected = cmdResults[cmdActiveIndex];
+    if (selected) {
+      setCmdInput('');
+      setIsCmdPaletteOpen(false);
+      setCmdHistory(prev => {
+        const next = [selected.id, ...prev.filter(c => c !== selected.id)];
+        return next.slice(0, 20);
+      });
+      executeStrike(selected.id);
+    } else if (cmdInput && target) {
       setCmdHistory(prev => [...prev, cmdInput]);
       setHistoryIndex(-1);
       executeStrike(cmdInput);
@@ -363,19 +475,31 @@ const addToast = (message, type = 'info') => {
   const handleCmdKeyDown = (e) => {
     if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setHistoryIndex(prev => {
-        const newIndex = prev < cmdHistory.length - 1 ? prev + 1 : prev;
-        setCmdInput(cmdHistory[cmdHistory.length - 1 - newIndex] || '');
-        return newIndex;
-      });
+      if (showRecentOnly && cmdInput === '') {
+        setHistoryIndex(prev => {
+          const newIndex = prev < cmdHistory.length - 1 ? prev + 1 : prev;
+          setCmdInput(cmdHistory[cmdHistory.length - 1 - newIndex] || '');
+          return newIndex;
+        });
+      } else {
+        setCmdActiveIndex(prev => Math.max(0, prev - 1));
+      }
     }
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setHistoryIndex(prev => {
-        const newIndex = prev > 0 ? prev - 1 : -1;
-        setCmdInput(cmdHistory[cmdHistory.length - 1 - newIndex] || '');
-        return newIndex;
-      });
+      if (showRecentOnly && cmdInput === '') {
+        setHistoryIndex(prev => {
+          const newIndex = prev > 0 ? prev - 1 : -1;
+          setCmdInput(cmdHistory[cmdHistory.length - 1 - newIndex] || '');
+          return newIndex;
+        });
+      } else {
+        setCmdActiveIndex(prev => Math.min(cmdResults.length - 1, prev + 1));
+      }
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleCmdSubmit(e);
     }
   };
 
@@ -535,7 +659,45 @@ const addToast = (message, type = 'info') => {
           <div className="brand-sub">STUDIO</div>
         </div>
         
+        {/* Search Bar */}
+        <div className="tool-search">
+          <input
+            type="text"
+            placeholder="Search tools..."
+            value={toolSearch}
+            onChange={(e) => setToolSearch(e.target.value)}
+            className="tool-search-input"
+            aria-label="Search tools"
+          />
+          {favorites.length > 0 && (
+            <div className="favorites-count">★ {favorites.length}</div>
+          )}
+        </div>
+
         <nav className="category-nav">
+          {/* Favorites Section */}
+          {favorites.length > 0 && (
+            <div className="cat-group">
+              <div className="cat-label active">★ Favorites</div>
+              <div className="tool-list open">
+                {favoritedTools.map(t => (
+                  <button
+                    key={t.id}
+                    className={`tool-btn ${selectedToolId === t.id ? 'active' : ''}`}
+                    onClick={() => handleToolClick(t.id, t.category)}
+                  >
+                    <span className="tool-id">{t.id}</span> {t.name}
+                    <span
+                      className="fav-star"
+                      onClick={(e) => { e.stopPropagation(); toggleFavorite(t.id); }}
+                      title="Remove from favorites"
+                    >★</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="cat-group">
             <div 
               className={`cat-label ${activeView === 'dashboard' ? 'active' : ''}`}
@@ -567,7 +729,7 @@ const addToast = (message, type = 'info') => {
             </div>
           </div>
 
-          {[...new Set(toolRegistry.map(t => t.category))].map(cat => (
+          {[...new Set(filteredTools.map(t => t.category))].map(cat => (
             <div key={cat} className="cat-group">
               <div 
                 className={`cat-label ${activeCategory === cat ? 'active' : ''}`}
@@ -576,16 +738,18 @@ const addToast = (message, type = 'info') => {
                 {cat}
               </div>
               <div className={`tool-list ${activeCategory === cat ? 'open' : ''}`}>
-                {toolRegistry.filter(t => t.category === cat).map(t => (
-                  <button 
-                    key={t.id} 
+                {nonFavoritedTools.filter(t => t.category === cat).map(t => (
+                  <button
+                    key={t.id}
                     className={`tool-btn ${selectedToolId === t.id ? 'active' : ''}`}
-                    onClick={() => {
-                      setSelectedToolId(t.id);
-                      setActiveCategory(cat);
-                    }}
+                    onClick={() => handleToolClick(t.id, t.category)}
                   >
                     <span className="tool-id">{t.id}</span> {t.name}
+                    <span
+                      className={`fav-star ${isFavorited(t.id) ? 'favorited' : ''}`}
+                      onClick={(e) => { e.stopPropagation(); toggleFavorite(t.id); }}
+                      title={isFavorited(t.id) ? 'Remove from favorites' : 'Add to favorites'}
+                    >{isFavorited(t.id) ? '★' : '☆'}</span>
                   </button>
                 ))}
               </div>
@@ -785,6 +949,23 @@ const addToast = (message, type = 'info') => {
         </div>
         )}
 
+        {/* Live Output Viewer Panel */}
+        {showLiveOutput && (
+          <div className={`live-output-panel ${executing ? 'active' : ''}`}>
+            <div className="live-output-header">
+              <span>LIVE_OUTPUT</span>
+              <button className="settings-toggle" onClick={() => setShowLiveOutput(false)} style={{fontSize:'0.5rem',padding:'2px 6px'}}>✕</button>
+            </div>
+            <div className="live-output-body" ref={liveOutputRef}>
+              {liveOutput.map((line, i) => (
+                <div key={i} className="log-line typewriter" style={{ animationDelay: `${i * 0.03}s`, fontSize: `${fontSize * 0.85}px` }}>
+                  {line}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div style={{padding:'8px',display:'flex',gap:'8px',borderTop:'1px solid var(--dark-red)',background:'#0a0a0a',alignItems:'center'}}>
           <span style={{fontSize:'0.55rem',color:'var(--text-dim)',fontFamily:'Orbitron',marginRight:'4px'}}>FILTER:</span>
           <button onClick={() => setLogFilter(f => ({...f, system: !f.system}))} className="settings-toggle" style={{fontSize:'0.5rem',padding:'2px 6px',borderColor: logFilter.system ? '#00ff41' : '#333',color: logFilter.system ? '#00ff41' : '#666'}}>SYS</button>
@@ -834,17 +1015,42 @@ const addToast = (message, type = 'info') => {
       </aside>
 
       {isCmdPaletteOpen && (
-        <div className="cmd-palette" onClick={() => setIsCmdPaletteOpen(false)}>
+        <div className="cmd-palette" onClick={(e) => { if (e.target === e.currentTarget) { setIsCmdPaletteOpen(false); setCmdInput(''); } }}>
           <form onSubmit={handleCmdSubmit}>
-            <input 
+            <input
+              ref={paletteInputRef}
               autoFocus
               className="palette-input"
-              placeholder="Run raw shell command..."
+              placeholder={showRecentOnly ? "Search tools, playbooks, or run command..." : "Search tools, playbooks, or run command..."}
               value={cmdInput}
               onChange={(e) => setCmdInput(e.target.value)}
+              onKeyDown={handleCmdKeyDown}
             />
-            <div className="palette-hint">Press Enter to execute</div>
+            <div className="palette-hint">↑↓ Navigate · Enter Execute · Esc Close · Ctrl+K Toggle</div>
           </form>
+          <div className="palette-results">
+            {cmdResults.length === 0 && (
+              <div className="palette-empty">No matches found</div>
+            )}
+            {cmdResults.map((item, i) => (
+              <div
+                key={`${item.type}-${item.id}`}
+                className={`palette-item ${i === cmdActiveIndex ? 'palette-item-active' : ''}`}
+                onClick={() => {
+                  setCmdInput('');
+                  setIsCmdPaletteOpen(false);
+                  setCmdHistory(prev => {
+                    const next = [item.id, ...prev.filter(c => c !== item.id)];
+                    return next.slice(0, 20);
+                  });
+                  executeStrike(item.id);
+                }}
+              >
+                <span className={`palette-type type-${item.type}`}>{item.type === 'tool' ? '⚙' : item.type === 'playbook' ? '◆' : '⌛'}</span>
+                <span className="palette-label">{item.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -915,6 +1121,58 @@ const addToast = (message, type = 'info') => {
               <button onClick={saveTemplate} className="settings-toggle" style={{fontSize:'0.55rem',padding:'4px 8px'}}>SAVE</button>
             </div>
             <button className="save-btn" onClick={() => setShowTemplates(false)}>CLOSE</button>
+          </div>
+        </div>
+      )}
+      {/* Tool Detail Modal */}
+      {showToolDetail && (
+        <div className="modal-overlay" onClick={() => setShowToolDetail(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">{currentTool.name}</h2>
+              <button className="modal-close" onClick={() => setShowToolDetail(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-info">
+                <span className="modal-category">{currentTool.category}</span>
+                <span className="modal-id">{currentTool.id}</span>
+              </div>
+              <p className="modal-description">{currentTool.info}</p>
+              <div className="modal-stats">
+                <div className="modal-stat">
+                  <span className="stat-label">Usefulness</span>
+                  <div className="stat-bar">
+                    {[1,2,3,4,5,6,7,8,9,10].map(i => (
+                      <span key={i} className={`stat-segment ${i <= currentTool.usefulness ? 'filled' : ''}`} />
+                    ))}
+                  </div>
+                  <span className="stat-value">{currentTool.usefulness}/10</span>
+                </div>
+                <div className="modal-stat">
+                  <span className="stat-label">Difficulty</span>
+                  <span className={`difficulty-badge ${currentTool.difficulty}`}>{currentTool.difficulty}</span>
+                </div>
+              </div>
+              <div className="modal-tags">
+                {currentTool.tags.map((tag, i) => (
+                  <span key={i} className="tag">{tag}</span>
+                ))}
+              </div>
+              {currentTool.link && (
+                <a href={currentTool.link} target="_blank" rel="noopener noreferrer" className="modal-link">
+                  🔗 {currentTool.link}
+                </a>
+              )}
+            </div>
+            <div className="modal-footer">
+              <span
+                className={`fav-toggle ${isFavorited(currentTool.id) ? 'favorited' : ''}`}
+                onClick={() => toggleFavorite(currentTool.id)}
+                title={isFavorited(currentTool.id) ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                {isFavorited(currentTool.id) ? '★ Favorited' : '☆ Add to favorites'}
+              </span>
+            </div>
           </div>
         </div>
       )}
