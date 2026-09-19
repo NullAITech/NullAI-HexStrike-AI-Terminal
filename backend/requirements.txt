@@ -1,4 +1,4 @@
-fastapi
-uvicorn
-requests
-pydantic
+fastapi>=0.111.0
+uvicorn>=0.30.0
+requests>=2.32.0
+pydantic>=2.8.0

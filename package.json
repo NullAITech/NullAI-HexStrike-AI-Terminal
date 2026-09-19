@@ -1,0 +1,25 @@
+{
+  "name": "hexstrike-sovereign-studio",
+  "version": "1.0.0",
+  "description": "AI-driven red teaming workstation — NullAI HexStrike. Neural Intelligence Core, 40+ offensive security tools, MITRE ATT&CK mapping, real-time SSE streaming.",
+  "main": "main.py",
+  "scripts": {
+    "dev": "cd ui && npm run dev",
+    "build": "cd ui && npm run build",
+    "preview": "cd ui && npm run preview"
+  },
+  "keywords": [
+    "red-team",
+    "offensive-security",
+    "ai",
+    "mitre-attack",
+    "pentest",
+    "nullai"
+  ],
+  "author": "NullAI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal.git"
+  }
+}

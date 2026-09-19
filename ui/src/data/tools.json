@@ -3,154 +3,2516 @@
     "id": "nmap",
     "name": "Nmap Network Scan",
     "category": "Recon & OSINT",
-    "info": "The standard for network discovery and security auditing. Scans ports and detects OS versions.",
-    "link": "https://nmap.org/book/man.html"
+    "info": "Standard network discovery and security auditing. Scans ports and detects OS versions.",
+    "link": "https://nmap.org/book/man.html",
+    "usefulness": 10,
+    "difficulty": "beginner",
+    "tags": [
+      "network",
+      "scan",
+      "recon",
+      "port-scan"
+    ],
+    "category_order": 1
   },
   {
-    "id": "emailharvester",
-    "name": "EmailHarvester",
+    "id": "masscan",
+    "name": "Masscan",
     "category": "Recon & OSINT",
-    "info": "Scrapes search engines (Google, Bing, PGP) to find email addresses associated with a domain.",
-    "link": "https://github.com/maldevel/EmailHarvester"
-  },
-  {
-    "id": "dmitry",
-    "name": "DMitry",
-    "category": "Recon & OSINT",
-    "info": "Deepmagic Information Gathering Tool. Gathers subdomains, emails, uptime info, and tcp port scan.",
-    "link": "https://github.com/jaygreig86/dmitry"
-  },
-  {
-    "id": "dnsenum",
-    "name": "DNSenum",
-    "category": "Recon & OSINT",
-    "info": "Multithreaded script to enumerate DNS information of a domain and discover non-contiguous ip blocks.",
-    "link": "https://github.com/fwaeytens/dnsenum"
+    "info": "The fastest TCP port scanner. Scans the entire internet in minutes.",
+    "link": "https://github.com/robertdavidgraham/masscan",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "network",
+      "scan",
+      "recon",
+      "port-scan",
+      "fast"
+    ],
+    "category_order": 1
   },
   {
     "id": "amass",
     "name": "OWASP Amass",
     "category": "Recon & OSINT",
     "info": "In-depth attack surface mapping and asset discovery using open source information gathering.",
-    "link": "https://github.com/owasp-amass/amass"
+    "link": "https://github.com/owasp-amass/amass",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "recon",
+      "osint",
+      "attack-surface",
+      "asset-discovery"
+    ],
+    "category_order": 1
   },
   {
-    "id": "sublist3r",
-    "name": "Sublist3r",
+    "id": "subfinder",
+    "name": "Subfinder",
     "category": "Recon & OSINT",
-    "info": "Fast sub-domain enumeration tool using OSINT engines like Baidu, Yahoo, and VirusTotal.",
-    "link": "https://github.com/aboul3la/Sublist3r"
+    "info": "Fast subdomain enumeration tool using passive online sources.",
+    "link": "https://github.com/projectdiscovery/subfinder",
+    "usefulness": 9,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "subdomain",
+      "osint",
+      "passive"
+    ],
+    "category_order": 1
   },
   {
-    "id": "photon",
-    "name": "Photon Crawler",
+    "id": "assetfinder",
+    "name": "Assetfinder",
     "category": "Recon & OSINT",
-    "info": "Incredibly fast crawler designed for OSINT. Extracts URLs, emails, social accounts, and files.",
-    "link": "https://github.com/s0md3v/Photon"
+    "info": "Finds assets related to a domain including subdomains and DNS records.",
+    "link": "https://github.com/tomnomnom/assetfinder",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "subdomain",
+      "osint",
+      "passive"
+    ],
+    "category_order": 1
   },
   {
-    "id": "sherlock",
-    "name": "Sherlock",
+    "id": "dnsenum",
+    "name": "DNSenum",
     "category": "Recon & OSINT",
-    "info": "Hunts down social media accounts by username across 300+ social networks.",
-    "link": "https://github.com/sherlock-project/sherlock"
+    "info": "Multithreaded script to enumerate DNS information and discover non-contiguous IP blocks.",
+    "link": "https://github.com/fwaeytens/dnsenum",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "dns",
+      "recon",
+      "enum",
+      "network"
+    ],
+    "category_order": 1
   },
   {
     "id": "fierce",
     "name": "Fierce DNS",
     "category": "Recon & OSINT",
     "info": "DNS reconnaissance tool for locating non-contiguous IP space.",
-    "link": "https://github.com/mschwager/fierce"
+    "link": "https://github.com/mschwager/fierce",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "dns",
+      "recon",
+      "enum",
+      "network"
+    ],
+    "category_order": 1
   },
   {
-    "id": "autorecon",
-    "name": "AutoRecon",
+    "id": "dig",
+    "name": "DIG",
     "category": "Recon & OSINT",
-    "info": "Multi-threaded reconnaissance tool that automates service enumeration.",
-    "link": "https://github.com/Tib3rius/AutoRecon"
+    "info": "Flexible tool for interrogating DNS name servers.",
+    "link": "https://linux.die.net/man/1/dig",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "dns",
+      "recon",
+      "enum",
+      "network"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "whois",
+    "name": "Whois",
+    "category": "Recon & OSINT",
+    "info": "Query WHOIS databases for domain registration information.",
+    "link": "https://linux.die.net/man/1/whois",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "osint",
+      "recon",
+      "enum",
+      "domain"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "photon",
+    "name": "Photon Crawler",
+    "category": "Recon & OSINT",
+    "info": "Incredibly fast crawler for OSINT. Extracts URLs, emails, social accounts, files.",
+    "link": "https://github.com/s0md3v/Photon",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "osint",
+      "crawler",
+      "recon",
+      "web"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "katana",
+    "name": "Katana",
+    "category": "Recon & OSINT",
+    "info": "Next-generation crawling and spidering framework by Project Discovery.",
+    "link": "https://github.com/projectdiscovery/katana",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "crawler",
+      "web",
+      "osint",
+      "passive"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "gau",
+    "name": "GAU",
+    "category": "Recon & OSINT",
+    "info": "Fetch known URLs from AlienVault OTX, Wayback Machine, Common Crawl.",
+    "link": "https://github.com/lc/gau",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "osint",
+      "web",
+      "url"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "waybackurls",
+    "name": "Wayback URLs",
+    "category": "Recon & OSINT",
+    "info": "Fetch all URLs known to the Wayback Machine for a given domain.",
+    "link": "https://github.com/tomnomnom/waybackurls",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "osint",
+      "web",
+      "url",
+      "passive"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "httpx",
+    "name": "Httpx",
+    "category": "Recon & OSINT",
+    "info": "Fast and multi-purpose HTTP toolkit for running probes against hosts.",
+    "link": "https://github.com/projectdiscovery/httpx",
+    "usefulness": 9,
+    "difficulty": "beginner",
+    "tags": [
+      "network",
+      "probe",
+      "recon",
+      "web",
+      "http"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "recon-ng",
+    "name": "Recon-NG",
+    "category": "Recon & OSINT",
+    "info": "Full-featured web reconnaissance framework with modular ecosystem.",
+    "link": "https://github.com/lanmaster53/recon-ng",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "recon",
+      "osint",
+      "framework",
+      "web"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "theHarvester",
+    "name": "TheHarvester",
+    "category": "Recon & OSINT",
+    "info": "Gather emails, subdomains, hosts, employee names from public sources.",
+    "link": "https://github.com/laramies/theHarvester",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "osint",
+      "recon",
+      "email",
+      "subdomain"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "sherlock",
+    "name": "Sherlock",
+    "category": "Recon & OSINT",
+    "info": "Hunts down social media accounts by username across 300+ networks.",
+    "link": "https://github.com/sherlock-project/sherlock",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "osint",
+      "social",
+      "recon",
+      "username"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "maltego",
+    "name": "Maltego",
+    "category": "Recon & OSINT",
+    "info": "Open-source intelligence and forensics unit for link analysis.",
+    "link": "https://www.maltego.com/",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "osint",
+      "link-analysis",
+      "recon",
+      "forensics"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "spiderfoot",
+    "name": "SpiderFoot",
+    "category": "Recon & OSINT",
+    "info": "Automates OSINT collection across 100+ modules for IPs, domains, emails.",
+    "link": "https://www.spiderfoot.net/",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "osint",
+      "recon",
+      "automated",
+      "enum"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "shodan",
+    "name": "Shodan CLI",
+    "category": "Recon & OSINT",
+    "info": "Search engine for Internet-connected devices and services.",
+    "link": "https://github.com/achillean/shodan-python",
+    "usefulness": 9,
+    "difficulty": "beginner",
+    "tags": [
+      "osint",
+      "shodan",
+      "recon",
+      "internet"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "emailharvester",
+    "name": "EmailHarvester",
+    "category": "Recon & OSINT",
+    "info": "Scrapes search engines to find email addresses associated with a domain.",
+    "link": "https://github.com/laramies/emailharvester",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "osint",
+      "recon",
+      "email"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "holehe",
+    "name": "Holehe",
+    "category": "Recon & OSINT",
+    "info": "Check if an email is used on 1000+ sites to find accounts.",
+    "link": "https://github.com/megadose/holehe",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "osint",
+      "email",
+      "recon",
+      "account"
+    ],
+    "category_order": 1
   },
   {
     "id": "nikto",
     "name": "Nikto Web Scan",
     "category": "Vulnerability & Web",
-    "info": "Web server scanner that tests for dangerous files, outdated versions, and config issues.",
-    "link": "https://github.com/sullo/nikto"
+    "info": "Web server scanner that tests for dangerous files, outdated versions, config issues.",
+    "link": "https://github.com/sullo/nikto",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "web",
+      "vuln-scan",
+      "server"
+    ],
+    "category_order": 3
   },
   {
     "id": "wapiti",
     "name": "Wapiti",
     "category": "Vulnerability & Web",
-    "info": "Web application vulnerability scanner that audits the security of your websites (Black-box).",
-    "link": "https://wapiti.sourceforge.io/"
+    "info": "Web application vulnerability scanner that audits security (Black-box).",
+    "link": "https://wapiti.sourceforge.io/",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "vuln-scan",
+      "black-box"
+    ],
+    "category_order": 3
   },
   {
     "id": "sqlmap",
     "name": "SQLMap Injection",
     "category": "Vulnerability & Web",
     "info": "Automatic SQL injection and database takeover tool. Detects and exploits flaws.",
-    "link": "https://sqlmap.org/"
+    "link": "https://sqlmap.org/",
+    "usefulness": 10,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "sql-injection",
+      "exploit",
+      "database"
+    ],
+    "category_order": 3
   },
   {
     "id": "commix",
     "name": "Commix",
     "category": "Vulnerability & Web",
     "info": "Automated all-in-one OS command injection and exploitation tool.",
-    "link": "https://github.com/commixproject/commix"
+    "link": "https://github.com/commixproject/commix",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "cmd-injection",
+      "exploit"
+    ],
+    "category_order": 3
   },
   {
     "id": "whatweb",
     "name": "WhatWeb",
     "category": "Vulnerability & Web",
     "info": "Next-gen web scanner. Identifies CMS, blogging platforms, statistic/analytics packages.",
-    "link": "https://github.com/urbanadventurer/WhatWeb"
+    "link": "https://github.com/urbanadventurer/WhatWeb",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "web",
+      "fingerprint",
+      "recon",
+      "cms"
+    ],
+    "category_order": 3
   },
   {
     "id": "wpscan",
     "name": "WPScan",
     "category": "Vulnerability & Web",
-    "info": "WordPress security scanner. Checks for vulnerable plugins, themes, and configuration backups.",
-    "link": "https://wpscan.com/wordpress-security-scanner"
+    "info": "WordPress security scanner. Checks for vulnerable plugins, themes, config backups.",
+    "link": "https://wpscan.com/",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "wordpress",
+      "vuln-scan",
+      "cms"
+    ],
+    "category_order": 3
   },
   {
     "id": "joomscan",
     "name": "JoomScan",
     "category": "Vulnerability & Web",
     "info": "OWASP Joomla! Vulnerability Scanner. Detects firewall misconfigs and vulnerable components.",
-    "link": "https://github.com/rezasp/joomscan"
+    "link": "https://github.com/rezasp/joomscan",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "joomla",
+      "vuln-scan",
+      "cms"
+    ],
+    "category_order": 3
   },
   {
     "id": "gobuster",
     "name": "Gobuster Dir",
     "category": "Vulnerability & Web",
     "info": "Directory/File, DNS and VHost busting tool written in Go. Fast and lightweight.",
-    "link": "https://github.com/OJ/gobuster"
+    "link": "https://github.com/OJ/gobuster",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "web",
+      "dir-brute",
+      "fuzz",
+      "enum"
+    ],
+    "category_order": 3
+  },
+  {
+    "id": "ffuf",
+    "name": "FFUF",
+    "category": "Vulnerability & Web",
+    "info": "Fast web fuzzer written in Go. Directory brute-forcing, virtual host discovery.",
+    "link": "https://github.com/ffuf/ffuf",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "fuzz",
+      "dir-brute",
+      "vhost"
+    ],
+    "category_order": 3
+  },
+  {
+    "id": "dirb",
+    "name": "Dirb",
+    "category": "Vulnerability & Web",
+    "info": "Web content scanner that bruteforces directories using wordlists.",
+    "link": "https://github.com/obullix/dirb",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "web",
+      "dir-brute",
+      "enum",
+      "wordlist"
+    ],
+    "category_order": 3
   },
   {
     "id": "wafw00f",
     "name": "WAFW00F",
     "category": "Vulnerability & Web",
-    "info": "Identifies and fingerprints Web Application Firewall (WAF) products protecting a website.",
-    "link": "https://github.com/EnableSecurity/wafw00f"
+    "info": "Identifies and fingerprints Web Application Firewall (WAF) products.",
+    "link": "https://github.com/EnableSecurity/wafw00f",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "web",
+      "waf",
+      "fingerprint",
+      "detect"
+    ],
+    "category_order": 3
   },
   {
     "id": "davtest",
     "name": "DavTest",
     "category": "Vulnerability & Web",
     "info": "Tests WebDAV enabled servers by uploading test executable files.",
-    "link": "https://github.com/cldrn/davtest"
+    "link": "https://github.com/cldrn/davtest",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "webdav",
+      "test",
+      "upload"
+    ],
+    "category_order": 3
   },
   {
     "id": "trufflehog",
     "name": "TruffleHog",
     "category": "Vulnerability & Web",
-    "info": "Searches for secrets, API keys, and credentials specifically in files and repositories.",
-    "link": "https://github.com/trufflesecurity/trufflehog"
+    "info": "Searches for secrets, API keys, and credentials in files and repositories.",
+    "link": "https://github.com/trufflesecurity/trufflehog",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "secrets",
+      "scan",
+      "git",
+      "credential"
+    ],
+    "category_order": 3
   },
   {
     "id": "searchsploit",
     "name": "SearchSploit",
     "category": "Exploitation",
     "info": "Command line search tool for Exploit-DB. Finds exploits for identified software versions.",
-    "link": "https://www.exploit-db.com/searchsploit"
+    "link": "https://www.exploit-db.com/searchsploit",
+    "usefulness": 9,
+    "difficulty": "beginner",
+    "tags": [
+      "exploit",
+      "search",
+      "exploitdb",
+      "cve"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "metasploit",
+    "name": "Metasploit Framework",
+    "category": "Exploitation",
+    "info": "The standard penetration testing framework. Exploit development, payload delivery.",
+    "link": "https://www.metasploit.com/",
+    "usefulness": 10,
+    "difficulty": "advanced",
+    "tags": [
+      "exploit",
+      "framework",
+      "payload",
+      "post-exploit"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "hydra",
+    "name": "Hydra",
+    "category": "Exploitation",
+    "info": "Network login cracker supporting dozens of protocols. Fast and modular.",
+    "link": "https://github.com/vanhauser-thc/thc-hydra",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "brute-force",
+      "crack",
+      "login",
+      "network"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "john",
+    "name": "John The Ripper",
+    "category": "Exploitation",
+    "info": "Fast password cracker supporting many hash types. Industry standard.",
+    "link": "https://www.openwall.com/john/",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "crack",
+      "hash",
+      "password",
+      "brute-force"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "hashcat",
+    "name": "Hashcat",
+    "category": "Exploitation",
+    "info": "World's fastest and most advanced password recovery utility. GPU-accelerated.",
+    "link": "https://hashcat.net/hashcat/",
+    "usefulness": 9,
+    "difficulty": "advanced",
+    "tags": [
+      "crack",
+      "hash",
+      "password",
+      "gpu",
+      "brute-force"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "bettercap",
+    "name": "Bettercap",
+    "category": "Exploitation",
+    "info": "Complete framework for MITM, network reconnaissance, and attack.",
+    "link": "https://www.bettercap.org/",
+    "usefulness": 9,
+    "difficulty": "advanced",
+    "tags": [
+      "mitm",
+      "network",
+      "recon",
+      "exploit",
+      "framework"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "aircrack",
+    "name": "Aircrack-NG",
+    "category": "Exploitation",
+    "info": "WiFi penetration testing suite. WEP/WPA cracking and packet injection.",
+    "link": "https://www.aircrack-ng.org/",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "wifi",
+      "crack",
+      "wep",
+      "wpa",
+      "packet"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "responder",
+    "name": "Responder",
+    "category": "Exploitation",
+    "info": "LLMNR/NBT-NS/mDNS poisoner. Captures NTLMv2 hashes for offline cracking.",
+    "link": "https://github.com/lgandx/Responder",
+    "usefulness": 9,
+    "difficulty": "advanced",
+    "tags": [
+      "mitm",
+      "ntlm",
+      "hash",
+      "poison",
+      "network"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "impacket",
+    "name": "Impacket",
+    "category": "Exploitation",
+    "info": "Python library for working with network protocols. SMB, RPC, LDAP, Kerberos.",
+    "link": "https://github.com/SecureAuthCorp/impacket",
+    "usefulness": 9,
+    "difficulty": "advanced",
+    "tags": [
+      "network",
+      "smb",
+      "rpc",
+      "ldap",
+      "kerberos",
+      "exploit"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "bloodhound",
+    "name": "BloodHound",
+    "category": "Post-Exploitation",
+    "info": "Active directory attack path analysis. Graph-based relationship mapping.",
+    "link": "https://bloodhound.readthedocs.io/",
+    "usefulness": 10,
+    "difficulty": "intermediate",
+    "tags": [
+      "ad",
+      "graph",
+      "path",
+      "post-exploit",
+      "enum"
+    ],
+    "category_order": 7
+  },
+  {
+    "id": "linpeas",
+    "name": "LinPEAS",
+    "category": "Post-Exploitation",
+    "info": "Local Linux enumeration and privilege escalation checker.",
+    "link": "https://github.com/carlospolop/PEASS-ng",
+    "usefulness": 10,
+    "difficulty": "beginner",
+    "tags": [
+      "enum",
+      "priv-esc",
+      "linux",
+      "post-exploit"
+    ],
+    "category_order": 7
+  },
+  {
+    "id": "winpeas",
+    "name": "WinPEAS",
+    "category": "Post-Exploitation",
+    "info": "Windows local enumeration and privilege escalation checker.",
+    "link": "https://github.com/carlospolop/PEASS-ng",
+    "usefulness": 10,
+    "difficulty": "beginner",
+    "tags": [
+      "enum",
+      "priv-esc",
+      "windows",
+      "post-exploit"
+    ],
+    "category_order": 7
+  },
+  {
+    "id": "sliver",
+    "name": "Sliver",
+    "category": "Exploitation",
+    "info": "Open-source adversary emulation and post-exploitation framework.",
+    "link": "https://github.com/BishopFox/sliver",
+    "usefulness": 9,
+    "difficulty": "advanced",
+    "tags": [
+      "framework",
+      "post-exploit",
+      "c2",
+      "emulation"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "crackmapexec",
+    "name": "CrackMapExec",
+    "category": "Post-Exploitation",
+    "info": "Swiss army knife for pentesting Windows/AD networks.",
+    "link": "https://github.com/byt3bl33d3r/CrackMapExec",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "ad",
+      "windows",
+      "enum",
+      "exploit",
+      "network"
+    ],
+    "category_order": 7
+  },
+  {
+    "id": "kube-hunter",
+    "name": "KubeHunter",
+    "category": "Cloud & Container",
+    "info": "Hunts for security weaknesses in Kubernetes clusters.",
+    "link": "https://github.com/aquasecurity/kube-hunter",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "k8s",
+      "cloud",
+      "container",
+      "hunt",
+      "vuln"
+    ],
+    "category_order": 9
+  },
+  {
+    "id": "trivy",
+    "name": "Trivy",
+    "category": "Cloud & Container",
+    "info": "Comprehensive container and Kubernetes security scanner.",
+    "link": "https://github.com/aquasecurity/trivy",
+    "usefulness": 9,
+    "difficulty": "beginner",
+    "tags": [
+      "container",
+      "k8s",
+      "scan",
+      "vuln",
+      "cloud"
+    ],
+    "category_order": 9
+  },
+  {
+    "id": "pacu",
+    "name": "Pacu",
+    "category": "Cloud & Container",
+    "info": "AWS exploitation framework. Manages IAM, EC2, S3, Lambda access.",
+    "link": "https://github.com/RhinoSecurityLabs/pacu",
+    "usefulness": 9,
+    "difficulty": "advanced",
+    "tags": [
+      "aws",
+      "cloud",
+      "exploit",
+      "iam",
+      "framework"
+    ],
+    "category_order": 9
+  },
+  {
+    "id": "garak",
+    "name": "Garak",
+    "category": "Neural & AI",
+    "info": "LLM vulnerability scanner. Probes AI models for prompt injection, bias, hallucination.",
+    "link": "https://github.com/leondz/garak",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "llm",
+      "ai",
+      "vuln",
+      "red-team",
+      "test"
+    ],
+    "category_order": 10
+  },
+  {
+    "id": "llmfuzzer",
+    "name": "LLMFuzzer",
+    "category": "Neural & AI",
+    "info": "Fuzzing framework for large language models. Tests robustness and safety.",
+    "link": "https://github.com/LinkedCompany/LLMFuzzer",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "llm",
+      "fuzz",
+      "ai",
+      "robustness"
+    ],
+    "category_order": 10
+  },
+  {
+    "id": "vigil",
+    "name": "Vigil",
+    "category": "Neural & AI",
+    "info": "AI red teaming tool for evaluating LLM safety and security posture.",
+    "link": "https://github.com/vigilance-ai/vigil",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "llm",
+      "ai",
+      "red-team",
+      "safety",
+      "test"
+    ],
+    "category_order": 10
+  },
+  {
+    "id": "promptfoo",
+    "name": "Promptfoo",
+    "category": "Neural & AI",
+    "info": "Evaluate and test LLM prompts. Compare models, detect vulnerabilities.",
+    "link": "https://github.com/promptfoo/promptfoo",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "llm",
+      "test",
+      "eval",
+      "prompt",
+      "ai"
+    ],
+    "category_order": 10
+  },
+  {
+    "id": "art",
+    "name": "Adversarial Robustness Toolbox",
+    "category": "Neural & AI",
+    "info": "Library for adversarial ML attacks and defenses. Perturbations, poisoning.",
+    "link": "https://github.com/Trusted-AI/adversarial-robustness-toolbox",
+    "usefulness": 6,
+    "difficulty": "advanced",
+    "tags": [
+      "ml",
+      "adversarial",
+      "ai",
+      "attack",
+      "defense"
+    ],
+    "category_order": 10
+  },
+  {
+    "id": "cewl",
+    "name": "Cewl",
+    "category": "Recon & OSINT",
+    "info": "Custom wordlist generator from web content. Feeds Hydra, John, Hashcat.",
+    "link": "https://github.com/digininja/Cewl",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "wordlist",
+      "generator",
+      "recon",
+      "web"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "wfuzz",
+    "name": "WFuzz",
+    "category": "Vulnerability & Web",
+    "info": "Web application fuzzer. Brute-forces directories, parameters, injections.",
+    "link": "https://github.com/xmendez/wfuzz",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "fuzz",
+      "dir-brute",
+      "enum",
+      "param"
+    ],
+    "category_order": 3
+  },
+  {
+    "id": "nbtscan",
+    "name": "NbtScan",
+    "category": "Recon & OSINT",
+    "info": "NetBIOS name scanner. Enumerates Windows shares and user accounts.",
+    "link": "https://github.com/butterworth/nbtscan",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "netbios",
+      "enum",
+      "network",
+      "windows"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "enum4linux",
+    "name": "Enum4Linux",
+    "category": "Recon & OSINT",
+    "info": "Enumerates SMB/CIFS information from Windows/Unix systems.",
+    "link": "https://github.com/CiscoCXSecurity/enum4linux",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "smb",
+      "enum",
+      "network",
+      "windows"
+    ],
+    "category_order": 1
+  },
+  {
+    "id": "rpcclient",
+    "name": "RpcClient",
+    "category": "Exploitation",
+    "info": "Client for MS-RPC operations. Enumerates SAM/RPC users and shares.",
+    "link": "https://www.samba.org/samba/docs/man/manpages/rpcclient.1.html",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "rpc",
+      "enum",
+      "smb",
+      "network"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "ncat",
+    "name": "Ncat",
+    "category": "Exploitation",
+    "info": "NMAP's netcat replacement. Chats, port scans, transfer files, execute commands.",
+    "link": "https://nmap.org/ncat/",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "network",
+      "chat",
+      "scan",
+      "relay",
+      "netcat"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "openssl",
+    "name": "OpenSSL",
+    "category": "Exploitation",
+    "info": "Cryptography library and toolkit. TLS/SSL testing, cert manipulation.",
+    "link": "https://www.openssl.org/",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "crypto",
+      "tls",
+      "ssl",
+      "cert",
+      "test"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "socat",
+    "name": "Socat",
+    "category": "Exploitation",
+    "info": "Multipurpose relay. Port forwarding, proxying, shell access over network.",
+    "link": "https://github.com/AndersDinham/socat",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "relay",
+      "proxy",
+      "network",
+      "shell"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "tcpdump",
+    "name": "Tcpdump",
+    "category": "Exploitation",
+    "info": "Command-line packet analyzer. Captures and inspects network traffic.",
+    "link": "https://www.tcpdump.org/",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "network",
+      "packet",
+      "capture",
+      "analysis"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "wireshark",
+    "name": "Wireshark",
+    "category": "Exploitation",
+    "info": "Network protocol analyzer. Deep packet inspection and decoding.",
+    "link": "https://www.wireshark.org/",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "network",
+      "packet",
+      "analysis",
+      "decode",
+      "forensics"
+    ],
+    "category_order": 5
+  },
+  {
+    "id": "steghide",
+    "name": "Steghide",
+    "category": "Post-Exploitation",
+    "info": "Hides data inside image/audio files. Steganography tool for covert channels.",
+    "link": "https://github.com/StefanoLasota/steghide",
+    "usefulness": 5,
+    "difficulty": "beginner",
+    "tags": [
+      "stego",
+      "hide",
+      "covert",
+      "data"
+    ],
+    "category_order": 7
+  },
+  {
+    "id": "binwalk",
+    "name": "Binwalk",
+    "category": "Post-Exploitation",
+    "info": "Firmware analysis tool. Extracts embedded files, executable code, data.",
+    "link": "https://github.com/ReFirmLabs/binwalk",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "firmware",
+      "extract",
+      "reverse",
+      "analysis"
+    ],
+    "category_order": 7
+  },
+  {
+    "id": "foremost",
+    "name": "Foremost",
+    "category": "Post-Exploitation",
+    "info": "Forensic file recovery. Carves files from disk images by header/footer.",
+    "link": "https://github.com/foremost/foremost",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "forensic",
+      "recovery",
+      "carve",
+      "file"
+    ],
+    "category_order": 7
+  },
+  {
+    "id": "volatility",
+    "name": "Volatility",
+    "category": "Post-Exploitation",
+    "info": "Memory forensics framework. Analyzes RAM dumps for malware, processes.",
+    "link": "https://github.com/volatilityfoundation/volatility",
+    "usefulness": 9,
+    "difficulty": "advanced",
+    "tags": [
+      "forensics",
+      "memory",
+      "ram",
+      "malware",
+      "analysis"
+    ],
+    "category_order": 7
+  },
+  {
+    "id": "dirsearch",
+    "name": "Dirsearch",
+    "category": "Web",
+    "info": "Advanced directory brute-forcer written in Python with multiple extensions support.",
+    "link": "https://github.com/maurosoria/dirsearch",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "web",
+      "dir-brute",
+      "enum",
+      "fuzz"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "nuclei",
+    "name": "Nuclei",
+    "category": "Web",
+    "info": "Template-based vulnerability scanner by Project Discovery. Fast and customizable.",
+    "link": "https://github.com/projectdiscovery/nuclei",
+    "usefulness": 10,
+    "difficulty": "intermediate",
+    "tags": [
+      "vuln-scan",
+      "template",
+      "web",
+      "fast",
+      "custom"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "sublist3r",
+    "name": "Sublist3r",
+    "category": "Recon",
+    "info": "Fast subdomain enumeration using search engines and DNS.",
+    "link": "https://github.com/aboul3la/Sublist3r",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "subdomain",
+      "enum",
+      "osint"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "testssl",
+    "name": "TestSSL",
+    "category": "Web",
+    "info": "SSL/TLS security testing tool. Checks cipher suites, protocols, and vulnerabilities.",
+    "link": "https://testssl.sh/",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "ssl",
+      "tls",
+      "scan",
+      "cipher",
+      "web"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "sslyze",
+    "name": "SSLyze",
+    "category": "Web",
+    "info": "SSL/TLS scanning library for analyzing server configurations.",
+    "link": "https://github.com/nabla-c0d3/sslyze",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "ssl",
+      "tls",
+      "scan",
+      "config"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "dnsrecon",
+    "name": "DNSRecon",
+    "category": "Recon",
+    "info": "DNS reconnaissance script for enumeration and zone transfers.",
+    "link": "https://github.com/darkoperator/dnsrecon",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "dns",
+      "recon",
+      "enum",
+      "zone-transfer"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "dnsmap",
+    "name": "DNSMap",
+    "category": "Recon",
+    "info": "DNS domain name brute forcing tool for discovering subdomains.",
+    "link": "https://github.com/iphelix/dnsmap",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "dns",
+      "recon",
+      "brute",
+      "subdomain"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "dnsx",
+    "name": "DNSX",
+    "category": "Recon",
+    "info": "DNS toolkit for DNS probing, subdomain enumeration, and wildcard filtering.",
+    "link": "https://github.com/projectdiscovery/dnsx",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "dns",
+      "recon",
+      "probe",
+      "enum",
+      "filter"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "naabu",
+    "name": "Naabu",
+    "category": "Recon",
+    "info": "Fast port scanner written in Go for discovering open ports.",
+    "link": "https://github.com/projectdiscovery/naabu",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "network",
+      "port-scan",
+      "recon",
+      "fast"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "feroxbuster",
+    "name": "Feroxbuster",
+    "category": "Web",
+    "info": "Fast, recursive directory brute-forcer with status code filtering.",
+    "link": "https://github.com/epi052/feroxbuster",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "web",
+      "dir-brute",
+      "enum",
+      "recursive"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "hakrawler",
+    "name": "Hakrawler",
+    "category": "Recon",
+    "info": "Web crawler for discovering endpoints and hidden paths.",
+    "link": "https://github.com/hakluke/hakrawler",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "crawler",
+      "web",
+      "endpoints"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "unfurl",
+    "name": "Unfurl",
+    "category": "Recon",
+    "info": "URL parsing and manipulation tool for query string analysis.",
+    "link": "https://github.com/tomnomnom/unfurl",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "url",
+      "parse",
+      "query"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "qsreplace",
+    "name": "Qsreplace",
+    "category": "Recon",
+    "info": "Replace query string parameters in URLs for testing.",
+    "link": "https://github.com/tomnomnom/qsreplace",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "url",
+      "query",
+      "param"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "anew",
+    "name": "Anew",
+    "category": "Recon",
+    "info": "Append new lines to a file, avoiding duplicates.",
+    "link": "https://github.com/tomnomnom/anew",
+    "usefulness": 5,
+    "difficulty": "beginner",
+    "tags": [
+      "pipe",
+      "filter",
+      "unique",
+      "utility"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "interlace",
+    "name": "Interlace",
+    "category": "Exploit",
+    "info": "Tool to interleave and parallelize multiple security tools.",
+    "link": "https://github.com/carlospolop/interlace",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "parallel",
+      "tool",
+      "orchestrate",
+      "automate"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "dalfox",
+    "name": "Dalfox",
+    "category": "Web",
+    "info": "XSS scanner and parameter analysis tool for web security.",
+    "link": "https://github.com/hahwul/dalfox",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "xss",
+      "scan",
+      "param"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "xsstrike",
+    "name": "XSStrike",
+    "category": "Web",
+    "info": "Advanced XSS detection and exploitation suite.",
+    "link": "https://github.com/s0md3v/XSStrike",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "xss",
+      "detection",
+      "exploit"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "darksun",
+    "name": "DarkSun",
+    "category": "Web",
+    "info": "Multi-threaded web vulnerability scanner with custom payloads.",
+    "link": "https://github.com/bhavsec/darksun",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "web",
+      "vuln-scan",
+      "payload",
+      "custom"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "jaeles",
+    "name": "Jaeles",
+    "category": "Web",
+    "info": "Modular vulnerability scanner framework for web testing.",
+    "link": "https://github.com/jaeles-project/jaeles",
+    "usefulness": 8,
+    "difficulty": "advanced",
+    "tags": [
+      "web",
+      "vuln-scan",
+      "modular",
+      "framework"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "getjs",
+    "name": "GetJS",
+    "category": "Recon",
+    "info": "JavaScript file extractor from websites for analysis.",
+    "link": "https://github.com/003random/GetJS",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "js",
+      "extract",
+      "web"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "linkfinder",
+    "name": "LinkFinder",
+    "category": "Recon",
+    "info": "JavaScript analysis tool for finding hidden endpoints and secrets.",
+    "link": "https://github.com/GerbenJavado/LinkFinder",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "recon",
+      "js",
+      "endpoints",
+      "secrets"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "secretsfinder",
+    "name": "SecretsFinder",
+    "category": "Recon",
+    "info": "Secret scanner for JavaScript files and web content.",
+    "link": "https://github.com/zardus/secretfinder",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "recon",
+      "secrets",
+      "js",
+      "scan"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "gitleaks",
+    "name": "Gitleaks",
+    "category": "Exploit",
+    "info": "Git secret scanner. Detects API keys, tokens, and credentials.",
+    "link": "https://github.com/gitleaks/gitleaks",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "secrets",
+      "git",
+      "scan",
+      "credential"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "detect-secrets",
+    "name": "Detect-Secrets",
+    "category": "Exploit",
+    "info": "Security utility for detecting secrets in code repositories.",
+    "link": "https://github.com/Yelp/detect-secrets",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "secrets",
+      "git",
+      "scan",
+      "code"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "graudit",
+    "name": "Graudit",
+    "category": "Exploit",
+    "info": "Greyhat security code review tool using signature matching.",
+    "link": "https://github.com/wireghoul/graudit",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "code",
+      "review",
+      "signatures",
+      "scan"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "jwt_tool",
+    "name": "JWT Tool",
+    "category": "Exploit",
+    "info": "JWT token manipulation, cracking, and exploitation tool.",
+    "link": "https://github.com/ticarpi/jwt_tool",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "jwt",
+      "auth",
+      "exploit",
+      "crack"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "ruler",
+    "name": "Ruler",
+    "category": "Exploit",
+    "info": "Office 365 attack framework for mailbox and tenant enumeration.",
+    "link": "https://github.com/sensepost/ruler",
+    "usefulness": 8,
+    "difficulty": "advanced",
+    "tags": [
+      "office365",
+      "exploit",
+      "enum",
+      "ad"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "spray",
+    "name": "Spray",
+    "category": "Password",
+    "info": "Password spraying tool for testing authentication mechanisms.",
+    "link": "https://github.com/AlessandroZ/laZagne",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "password",
+      "spray",
+      "auth",
+      "brute-force"
+    ],
+    "category_order": 11
+  },
+  {
+    "id": "cupp",
+    "name": "Cupp",
+    "category": "Password",
+    "info": "Common User Passwords Profiler \u2014 generates targeted wordlists.",
+    "link": "https://github.com/Mebus/cupp",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "wordlist",
+      "generator",
+      "password",
+      "targeted"
+    ],
+    "category_order": 11
+  },
+  {
+    "id": "crunch",
+    "name": "Crunch",
+    "category": "Wordlist",
+    "info": "Wordlist generator with customizable patterns and charset.",
+    "link": "https://github.com/danielmiessler/crunch",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "wordlist",
+      "generator",
+      "custom",
+      "charset"
+    ],
+    "category_order": 12
+  },
+  {
+    "id": "hashcat-utils",
+    "name": "Hashcat Utils",
+    "category": "Password",
+    "info": "Utility collection for Hashcat \u2014 key manipulation and mask generation.",
+    "link": "https://github.com/hashcat/hashcat-utils",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "hash",
+      "utility",
+      "mask",
+      "key"
+    ],
+    "category_order": 11
+  },
+  {
+    "id": "maskprocessor",
+    "name": "Maskprocessor",
+    "category": "Wordlist",
+    "info": "Mask-based wordlist generator for password cracking.",
+    "link": "https://github.com/hashcat/hashcat-utils",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "wordlist",
+      "generator",
+      "mask",
+      "brute-force"
+    ],
+    "category_order": 12
+  },
+  {
+    "id": "princeprocessor",
+    "name": "Princeprocessor",
+    "category": "Wordlist",
+    "info": "PRINCE password generator \u2014 marks-style wordlist creation.",
+    "link": "https://github.com/hashcat/princeprocessor",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "wordlist",
+      "generator",
+      "password",
+      "marks"
+    ],
+    "category_order": 12
+  },
+  {
+    "id": "proxychains",
+    "name": "Proxychains",
+    "category": "Exploit",
+    "info": "Proxy chaining tool for routing traffic through multiple proxies.",
+    "link": "https://github.com/rofl0r/proxychains-ng",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "proxy",
+      "chain",
+      "routing",
+      "traffic"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "sslstrip",
+    "name": "SSLstrip",
+    "category": "Exploit",
+    "info": "SSL stripping attack tool for downgrading HTTPS connections.",
+    "link": "https://github.com/moxie0/sslstrip",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "mitm",
+      "ssl",
+      "downgrade",
+      "attack"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "mitm6",
+    "name": "Mitm6",
+    "category": "Exploit",
+    "info": "IPv6 MITM attack tool for Active Directory environments.",
+    "link": "https://github.com/dirkjanm/mitm6",
+    "usefulness": 8,
+    "difficulty": "advanced",
+    "tags": [
+      "mitm",
+      "ipv6",
+      "ad",
+      "exploit",
+      "network"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "evil-winrm",
+    "name": "Evil-WinRM",
+    "category": "Exploit",
+    "info": "Windows remote management exploitation via WinRM.",
+    "link": "https://github.com/Hackplayers/evil-winrm",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "winrm",
+      "exploit",
+      "windows",
+      "remote"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "smbmap",
+    "name": "Smbmap",
+    "category": "Exploit",
+    "info": "SMB share enumerator for discovering accessible shares.",
+    "link": "https://github.com/ShawnDEvans/smbmap",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "smb",
+      "enum",
+      "share",
+      "windows"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "ldapdomaindump",
+    "name": "Ldapdomaindump",
+    "category": "Post-Exploit",
+    "info": "LDAP domain dumper for Active Directory enumeration.",
+    "link": "https://github.com/dirkjanm/ldapdomaindump",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "ldap",
+      "enum",
+      "ad",
+      "dump"
+    ],
+    "category_order": 8
+  },
+  {
+    "id": "certipy",
+    "name": "Certipy",
+    "category": "Post-Exploit",
+    "info": "Active Directory certificate enumeration and abuse.",
+    "link": "https://github.com/ly4k/Certipy",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "ad",
+      "cert",
+      "enum",
+      "abuse"
+    ],
+    "category_order": 8
+  },
+  {
+    "id": "pocsuite3",
+    "name": "Pocsuite3",
+    "category": "Exploit",
+    "info": "Proof-of-concept framework for vulnerability verification.",
+    "link": "https://github.com/knownsec/pocsuite3",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pentest"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "xray",
+    "name": "Xray",
+    "category": "Web",
+    "info": "Web vulnerability scanner with GUI and CLI modes.",
+    "link": "https://github.com/chaitin/xray",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pentest"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "ssh-audit",
+    "name": "SSH Audit",
+    "category": "Web",
+    "info": "SSH server auditing tool for configuration and key analysis.",
+    "link": "https://github.com/jtesta/ssh-audit",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pentest"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "cipherscan",
+    "name": "Cipherscan",
+    "category": "Web",
+    "info": "SSL/TLS cipher suite scanner for server configuration.",
+    "link": "https://github.com/mozilla/cipherscan",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pentest"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "sslscan",
+    "name": "SSLscan",
+    "category": "Web",
+    "info": "SSL/TLS scanner for identifying cipher suites and vulnerabilities.",
+    "link": "https://github.com/rbsec/sslscan",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pentest"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "mkcert",
+    "name": "Mkcert",
+    "category": "Password",
+    "info": "Local CA certificate tool for development and testing.",
+    "link": "https://github.com/FiloSottile/mkcert",
+    "usefulness": 5,
+    "difficulty": "beginner",
+    "tags": [
+      "ssl",
+      "cert",
+      "dev",
+      "local",
+      "ca"
+    ],
+    "category_order": 11
+  },
+  {
+    "id": "step-cli",
+    "name": "Step CLI",
+    "category": "Password",
+    "info": "Certificate authority CLI tool for managing PKI.",
+    "link": "https://github.com/smallstep/cli",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pki",
+      "cert",
+      "ca",
+      "tls"
+    ],
+    "category_order": 11
+  },
+  {
+    "id": "ldapsearch",
+    "name": "Ldapsearch",
+    "category": "Recon",
+    "info": "LDAP search utility for querying directory services.",
+    "link": "https://man7.org/linux/man-pages/man1/ldapsearch.1.html",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pentest"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "jxplorer",
+    "name": "Jxplorer",
+    "category": "Recon",
+    "info": "LDAP browser for exploring and editing directory entries.",
+    "link": "https://jxplorer.org/",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pentest"
+    ],
+    "category_order": 2
+  },
+  {
+    "id": "netexec",
+    "name": "NetExec",
+    "category": "Exploit",
+    "info": "Network service exploitation tool for Windows/AD environments.",
+    "link": "https://github.com/Porchetta-Industries/NetExec",
+    "usefulness": 5,
+    "difficulty": "intermediate",
+    "tags": [
+      "pentest"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "polenum",
+    "name": "Polenum",
+    "category": "Post-Exploit",
+    "info": "Polkit enumeration tool for Linux privilege escalation.",
+    "link": "https://github.com/SecWiki/polenum",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "polkit",
+      "enum",
+      "linux",
+      "priv-esc"
+    ],
+    "category_order": 8
+  },
+  {
+    "id": "bloodhound-py",
+    "name": "BloodHound-Py",
+    "category": "Post-Exploit",
+    "info": "BloodHound Python ingestor for AD graph analysis.",
+    "link": "https://github.com/dirkjanm/BloodHound.py",
+    "usefulness": 9,
+    "difficulty": "intermediate",
+    "tags": [
+      "ad",
+      "graph",
+      "ingest",
+      "post-exploit",
+      "enum"
+    ],
+    "category_order": 8
+  },
+  {
+    "id": "pywerview",
+    "name": "Pywerview",
+    "category": "Post-Exploit",
+    "info": "Windows Active Directory enumeration script.",
+    "link": "https://github.com/GhostPack/pywerview",
+    "usefulness": 8,
+    "difficulty": "intermediate",
+    "tags": [
+      "ad",
+      "enum",
+      "windows",
+      "python"
+    ],
+    "category_order": 8
+  },
+  {
+    "id": "wifite",
+    "name": "Wifite",
+    "category": "Exploit",
+    "info": "Automated WiFi hacking tool for WEP/WPA/WPA2 attacks.",
+    "link": "https://github.com/derv82/wifite",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "wifi",
+      "automated",
+      "attack",
+      "wep",
+      "wpa"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "bully",
+    "name": "Bully",
+    "category": "Exploit",
+    "info": "WiFi WPS attack tool for brute-forcing PIN codes.",
+    "link": "https://github.com/aanarchyy/bully",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "wifi",
+      "wps",
+      "pin",
+      "brute-force"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "reaver",
+    "name": "Reaver",
+    "category": "Exploit",
+    "info": "WiFi WPS attack tool for WPA PSN and PBKDF2 attacks.",
+    "link": "https://github.com/t6x/reaver",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "wifi",
+      "wps",
+      "attack",
+      "pin"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "pixiewps",
+    "name": "Pixiewps",
+    "category": "Exploit",
+    "info": "WiFi WPS pixie dust attack for offline PIN cracking.",
+    "link": "https://github.com/wiire/pixiewps",
+    "usefulness": 6,
+    "difficulty": "advanced",
+    "tags": [
+      "wifi",
+      "wps",
+      "pixie",
+      "offline"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "airgeddon",
+    "name": "Airgeddon",
+    "category": "Exploit",
+    "info": "WiFi auditing script with automated attack modes.",
+    "link": "https://github.com/v1s1t0r1sh3r3/airgeddon",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "wifi",
+      "audit",
+      "automated",
+      "script"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "hcxdumptool",
+    "name": "HcxDumpTool",
+    "category": "Exploit",
+    "info": "WiFi packet capture tool for EAPOL handshake extraction.",
+    "link": "https://github.com/ZerBea/hcxdumptool",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "wifi",
+      "capture",
+      "eapol",
+      "handshake"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "hcxpcapngtool",
+    "name": "HcxPcapngtool",
+    "category": "Exploit",
+    "info": "WiFi capture conversion tool for hash extraction.",
+    "link": "https://github.com/ZerBea/hcxpcapngtool",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "wifi",
+      "capture",
+      "convert",
+      "hash"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "nuclei-templates",
+    "name": "Nuclei Templates",
+    "category": "Nuclei Templates",
+    "info": "Official community template repository for Nuclei vulnerability scanner. 10000+ templates for CVEs, misconfigs, exposed assets.",
+    "link": "https://github.com/projectdiscovery/nuclei-templates",
+    "usefulness": 9,
+    "difficulty": "beginner",
+    "tags": [
+      "templates",
+      "nuclei",
+      "vuln",
+      "cve",
+      "community"
+    ],
+    "category_order": 13
+  },
+  {
+    "id": "custom-exploits",
+    "name": "Custom Exploits",
+    "category": "Custom Exploit Scripts",
+    "info": "Curated collection of custom exploit scripts and proof-of-concept code for known vulnerabilities.",
+    "link": "https://github.com/rapid7/metasploit-framework",
+    "usefulness": 8,
+    "difficulty": "advanced",
+    "tags": [
+      "exploit",
+      "custom",
+      "poc",
+      "metasploit"
+    ],
+    "category_order": 14
+  },
+  {
+    "id": "revshell-gen",
+    "name": "Reverse Shell Generator",
+    "category": "Reverse Shell Generators",
+    "info": "Multi-platform reverse shell payload generator. Bash, Python, Perl, PHP, Ruby, C, Java, PowerShell.",
+    "link": "https://github.com/gentlemanofverona/reverse-shell-generator",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "reverse-shell",
+      "payload",
+      "generator",
+      "multi-lang"
+    ],
+    "category_order": 15
+  },
+  {
+    "id": "msfvenom",
+    "name": "Msfvenom",
+    "category": "Encoded Payloads",
+    "info": "Metasploit payload encoder and generator. Creates shellcode with encoding evasion for AV bypass.",
+    "link": "https://www.metasploit.com/",
+    "usefulness": 10,
+    "difficulty": "intermediate",
+    "tags": [
+      "payload",
+      "encode",
+      "shellcode",
+      "metasploit",
+      "evasion"
+    ],
+    "category_order": 16
+  },
+  {
+    "id": "payloads-allthethings",
+    "name": "Payloads All The Things",
+    "category": "Encoded Payloads",
+    "info": "Comprehensive payload lists for pentesting: SQLi, XSS, SSRF, RCE, path traversal, and more.",
+    "link": "https://github.com/swisskyrepo/PayloadsAllTheThings",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "payloads",
+      "list",
+      "sqli",
+      "xss",
+      "rce"
+    ],
+    "category_order": 16
+  },
+  {
+    "id": "encoder-tool",
+    "name": "Encoder Tool",
+    "category": "Encoded Payloads",
+    "info": "Multi-format encoder: Base64, URL, hex, HTML, UTF-16, XOR. For payload obfuscation and testing.",
+    "link": "https://github.com/le4f/encoder-tool",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "encode",
+      "base64",
+      "url",
+      "xor",
+      "obfuscate"
+    ],
+    "category_order": 16
+  },
+  {
+    "id": "cipher-tool",
+    "name": "Cipher Tool",
+    "category": "Cipher Tools",
+    "info": "Symmetric and asymmetric cipher toolkit. AES, RSA, DES, Blowfish, ChaCha20, Poly1305.",
+    "link": "https://github.com/sobolevn/cipher-tool",
+    "usefulness": 6,
+    "difficulty": "beginner",
+    "tags": [
+      "cipher",
+      "crypto",
+      "aes",
+      "rsa",
+      "toolkit"
+    ],
+    "category_order": 17
+  },
+  {
+    "id": "hash-identifier",
+    "name": "Hash Identifier",
+    "category": "Cipher Tools",
+    "info": "Identifies hash types (MD5, SHA1, NTLM, bcrypt, etc.) for password cracking workflows.",
+    "link": "https://github.com/HashPals/Hash-Identifier",
+    "usefulness": 8,
+    "difficulty": "beginner",
+    "tags": [
+      "hash",
+      "identifier",
+      "crack",
+      "enum",
+      "password"
+    ],
+    "category_order": 17
+  },
+  {
+    "id": "stegoveritas",
+    "name": "Stegoveritas",
+    "category": "Steganography",
+    "info": "Advanced steganography analysis tool. Extracts hidden data from images, audio, and files.",
+    "link": "https://github.com/BeeSecurity/stegoveritas",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "stego",
+      "analysis",
+      "extract",
+      "image"
+    ],
+    "category_order": 18
+  },
+  {
+    "id": "zsteg",
+    "name": "Zsteg",
+    "category": "Steganography",
+    "info": "Steganography analysis tool for BMP, PNG, and other image formats. LSB extraction.",
+    "link": "https://github.com/zed-0xff/zsteg",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "stego",
+      "lsb",
+      "extract",
+      "image"
+    ],
+    "category_order": 18
+  },
+  {
+    "id": "stegseek",
+    "name": "Stegseek",
+    "category": "Steganography",
+    "info": "Fast steghide cracking tool. Brute-forces unknown passwords for embedded payloads.",
+    "link": "https://github.com/RickdeJager/stegseek",
+    "usefulness": 6,
+    "difficulty": "advanced",
+    "tags": [
+      "stego",
+      "crack",
+      "steghide",
+      "brute"
+    ],
+    "category_order": 18
+  },
+  {
+    "id": "xortool",
+    "name": "XORTool",
+    "category": "Cipher Tools",
+    "info": "XOR brute-force decoder. Analyzes XOR-encoded data to find key length and recover plaintext.",
+    "link": "https://github.com/hellman/xortool",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "xor",
+      "cipher",
+      "brute",
+      "decode"
+    ],
+    "category_order": 17
+  },
+  {
+    "id": "exploitdb",
+    "name": "Exploit Database",
+    "category": "Custom Exploit Scripts",
+    "info": "Local mirror of Exploit-DB. Search and download PoC exploits offline for known CVEs.",
+    "link": "https://www.exploit-db.com/",
+    "usefulness": 9,
+    "difficulty": "beginner",
+    "tags": [
+      "exploit",
+      "cve",
+      "poc",
+      "offline",
+      "search"
+    ],
+    "category_order": 14
+  },
+  {
+    "id": "pwntools",
+    "name": "Pwntools",
+    "category": "Custom Exploit Scripts",
+    "info": "CTF exploitation framework. Shellcode generation, ELF/Mach-O/PE manipulation, network protocols.",
+    "link": "https://github.com/Gallopsled/pwntools",
+    "usefulness": 9,
+    "difficulty": "advanced",
+    "tags": [
+      "exploit",
+      "ctf",
+      "shellcode",
+      "elf",
+      "framework"
+    ],
+    "category_order": 14
+  },
+  {
+    "id": "shell-storm",
+    "name": "Shell-Storm API",
+    "category": "Custom Exploit Scripts",
+    "info": "Shellcode repository and search API. 50000+ shellcode entries for exploit development.",
+    "link": "https://shell-storm.org/",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "shellcode",
+      "repo",
+      "search",
+      "exploit"
+    ],
+    "category_order": 14
+  },
+  {
+    "id": "pe-bear",
+    "name": "PE-Bear",
+    "category": "Custom Exploit Scripts",
+    "info": "PE32/PE32+ analyzer for reverse engineering. Headers, imports, exports, resources inspection.",
+    "link": "https://github.com/hasherezade/pe-bear",
+    "usefulness": 7,
+    "difficulty": "intermediate",
+    "tags": [
+      "pe",
+      "reverse",
+      "engineering",
+      "analysis"
+    ],
+    "category_order": 14
+  },
+  {
+    "id": "ciphey",
+    "name": "Ciphey",
+    "category": "Cipher Tools",
+    "info": "Automated decryption tool. Uses AI/ML to identify and break ciphers without human input.",
+    "link": "https://github.com/ciphey/ciphey",
+    "usefulness": 7,
+    "difficulty": "beginner",
+    "tags": [
+      "cipher",
+      "decrypt",
+      "ai",
+      "automated"
+    ],
+    "category_order": 17
+  },
+  {
+    "id": "steg-analyze",
+    "name": "StegAnalyze",
+    "category": "Steganography",
+    "info": "Comprehensive steganography analysis suite. Detects and extracts hidden data from image files.",
+    "link": "https://github.com/zed-0xff/stegdetect",
+    "usefulness": 6,
+    "difficulty": "intermediate",
+    "tags": [
+      "stego",
+      "analysis",
+      "detect",
+      "image"
+    ],
+    "category_order": 18
+  },
+  {
+    "id": "rot13",
+    "name": "ROT13 Cipher",
+    "category": "Cipher Tools",
+    "info": "Caesar cipher tool for ROT13 encoding and decoding. Simple substitution cipher utility.",
+    "link": "https://en.wikipedia.org/wiki/ROT13",
+    "usefulness": 4,
+    "difficulty": "beginner",
+    "tags": [
+      "cipher",
+      "rot13",
+      "caesar",
+      "simple"
+    ],
+    "category_order": 17
+  },
+  {
+    "id": "scdbg",
+    "name": "SCDBG",
+    "category": "Custom Exploit Scripts",
+    "info": "Shellcode debugger for Windows. Analyzes and debugs shellcode in isolated sandbox environment.",
+    "link": "https://github.com/nickelqin/scdbg",
+    "usefulness": 6,
+    "difficulty": "advanced",
+    "tags": [
+      "shellcode",
+      "debug",
+      "windows",
+      "sandbox"
+    ],
+    "category_order": 14
+  },
+  {
+    "id": "cloudTOWN",
+    "name": "cloudTOWN Cloud Exploits",
+    "category": "Cloud & Container",
+    "info": "Church of Malware modular cloud exploitation framework. AWS S3 bucket scanner, Azure storage account scanner, live boto3 API calls, encryption/versioning/logging analysis, bucket policy ACL auditing, professional reporting to JSON/HTML/TXT.",
+    "link": "https://churchofmalware.org/tools/cloudTOWN_cloudEXPLOITS",
+    "usefulness": 7,
+    "difficulty": "advanced",
+    "tags": [
+      "cloud",
+      "aws",
+      "azure",
+      "exploit",
+      "s3",
+      "modular"
+    ],
+    "category_order": 9
+  },
+  {
+    "id": "PEN_toolkit",
+    "name": "PEN Testing Toolkit",
+    "category": "Web",
+    "info": "Church of Malware modular Go-based pentest toolkit. IDOR enumeration, file upload testing, SQL injection detection, GraphQL endpoint discovery, WebSocket security, Git repo exposure scanning, server fingerprinting, misconfiguration checks, persistent config.",
+    "link": "https://churchofmalware.org/tools/PEN_testing_toolkit",
+    "usefulness": 7,
+    "difficulty": "advanced",
+    "tags": [
+      "web",
+      "pentest",
+      "go",
+      "idor",
+      "sqli",
+      "graphql"
+    ],
+    "category_order": 4
+  },
+  {
+    "id": "Cerberus",
+    "name": "Cerberus Pentest Exploit",
+    "category": "Exploit",
+    "info": "Church of Malware intelligent security assessment framework. Advanced RCE exploitation, Windows CVE vectors (Type Confusion, NULL Pointer, RDP EoP), WebShellDeployer, FrameworkExploiter (Spring4Shell, Laravel, WordPress), SSRF, SUID binary exploitation, automated post-exploitation.",
+    "link": "https://churchofmalware.org/tools/Cerberus_pentest_exploit",
+    "usefulness": 8,
+    "difficulty": "advanced",
+    "tags": [
+      "exploit",
+      "rce",
+      "windows",
+      "cve",
+      "automated",
+      "framework"
+    ],
+    "category_order": 6
+  },
+  {
+    "id": "ROGUE",
+    "name": "ROGUE Botnet C2",
+    "category": "Post-Exploit",
+    "info": "Church of Malware v3.2 encrypted C2 framework for authorized testing. AES-256 encryption, web admin panel, cloud-aware implants (AWS/Azure/GCP/K8s), file encryption payloads, peer-to-peer fallback, cloud metadata detection, stealth persistence.",
+    "link": "https://churchofmalware.org/tools/rogue_botnet_RAT",
+    "usefulness": 7,
+    "difficulty": "advanced",
+    "tags": [
+      "c2",
+      "botnet",
+      "rat",
+      "encrypted",
+      "cloud",
+      "persistence"
+    ],
+    "category_order": 8
+  },
+  {
+    "id": "Rogue_Article",
+    "name": "Rogue Botnet Documentation",
+    "category": "Documentation",
+    "info": "Church of Malware educational guide: Building and Understanding a Modular RAT w/C2 Framework. Cloud-aware implants, provider-specific payloads, C2 architecture, persistence mechanisms, compound operations.",
+    "link": "https://churchofmalware.org/articles/Rogue_botnet_article_md.html",
+    "usefulness": 5,
+    "difficulty": "beginner",
+    "tags": [
+      "documentation",
+      "guide",
+      "rat",
+      "c2",
+      "educational"
+    ],
+    "category_order": 19
   }
 ]

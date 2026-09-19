@@ -1,0 +1,125 @@
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import toolRegistry from '../data/tools.json';
+
+const TerminalPage = () => {
+  const [target, setTarget] = useState('');
+  const [selectedToolId, setSelectedToolId] = useState(toolRegistry[0].id);
+  const [toolLogs, setToolLogs] = useState([\"[SYSTEM] HexStrike Kernel Loaded...\"]);
+  const [aiLogs, setAiLogs] = useState([\"[SYSTEM] Neural Intelligence Offline. Awaiting Vector...\"]);
+  const [executing, setExecuting] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(toolRegistry[0].category);
+  const [history, setHistory] = useState([]);
+  const [isCmdPaletteOpen, setIsCmdPaletteOpen] = useState(false);
+  const [cmdInput, setCmdInput] = useState('');
+
+  const toolRef = useRef(null);
+  const aiRef = useRef(null);
+
+  const currentTool = toolRegistry.find(t => t.id === selectedToolId) || toolRegistry[0];
+
+  useEffect(() => {
+    toolRef.current?.scrollIntoView({ behavior: \"smooth\" });
+    aiRef.current?.scrollIntoView({ behavior: \"smooth\" });
+  }, [toolLogs, aiLogs]);
+
+  // Keyboard shortcut for command palette (Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        setIsCmdPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const executeStrike = async (toolOverride = null) => {
+    const toolId = toolOverride || selectedToolId;
+    if (!target || executing) return;
+    setExecuting(true);
+    
+    const timestamp = new Date().toLocaleTimeString();
+    setToolLogs(prev => [...prev, `\\n[${timestamp}] > DISPATCHING ${toolId.toUpperCase()} ON ${target}...`]);
+    setAiLogs(prev => [...prev, `\\n[${timestamp}] > AI ANALYZING VECTOR...`]);
+
+    try {
+      const response = await axios.post('http://localhost:8000/execute', { 
+        tool: toolId, 
+        target: target 
+      });
+      
+      const { output, analysis } = response.data;
+      setToolLogs(prev => [...prev, output || \"No standard output returned.\"]);
+      setAiLogs(prev => [...prev, analysis || \"AI reasoning unavailable.\"]);
+      
+      setHistory(prev => [{
+        timestamp,
+        target,
+        tool: toolId,
+        status: 'SUCCESS'
+      }, ...prev].slice(0, 10));
+
+    } catch (err) {
+      setToolLogs(prev => [...prev, `[ERROR] Strike Failed: ${err.message}`]);
+      setAiLogs(prev => [...prev, `[ERROR] Connection lost to Neural Core.`]);
+    } finally {
+      setExecuting(false);
+    }
+  };
+
+  const handleCmdSubmit = (e) => {
+    e.preventDefault();
+    if (cmdInput && target) {
+      executeStrike(cmdInput);
+      setCmdInput('');
+      setIsCmdPaletteOpen(false);
+    }
+  };
+
+  return (
+    <div className=\"hex-studio\">
+      <div className=\"crt-overlay\" />
+      <div className=\"crt-flicker\" />
+
+      <aside className=\"hex-sidebar\">
+        <div className=\"sidebar-brand\">
+          <div className=\"brand-logo\">◢</div>
+          <div className=\"brand-text\">HEXSTRIKE</div>
+        </div>
+        
+        <nav className=\"category-nav\">
+          {[...new Set(toolRegistry.map(t => t.category))].map(cat => (
+            <div key={cat} className=\"cat-group\">
+              <div 
+                className={`cat-label ${activeCategory === cat ? 'active' : ''}`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {cat}
+              </div>
+              <div className={`tool-list ${activeCategory === cat ? 'open' : ''}`}>
+                {toolRegistry.filter(t => t.category === cat).map(t => (
+                  <button 
+                    key={t.id} 
+                    className={`tool-btn ${selectedToolId === t.id ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedToolId(t.id);
+                      setActiveCategory(cat);
+                    }}
+                  >
+                    <span className=\"tool-id\">{t.id}</span> {t.name}
+                  </button>
+                ))}\n              </div>
+            </div>
+          ))}\n        </nav>
+
+        <div className=\"sidebar-footer\">\n          <div className=\"status-indicator\">\n            <span className=\"dot\"></span> KERNEL: STABLE\n          </div>\n        </div>\n      </aside>
+
+      <main className=\"hex-workspace\">\n        <header className=\"workspace-header\">\n          <div className=\"target-bar\">\n            <span className=\"label\">TARGET_VECTOR:</span>\n            <input \n              type=\"text\" \n              placeholder=\"Enter IP or Domain...\" \n              value={target}\n              onChange={(e) => setTarget(e.target.value)}\n              className=\"target-input\"\n            />\n            <button onClick={() => executeStrike()} disabled={executing} className=\"strike-btn\">\n              {executing ? 'STRIKING...' : 'EXECUTE STRIKE'}\n            </button>\n          </div>\n          <div className=\"header-metrics\">\n            <div className=\"metric\">TOOL: <span className=\"highlight\">{currentTool.name}</span></div>\n            <div className=\"metric\">SENSITIVITY: <span className=\"highlight\">HIGH</span></div>\n          </div>\n        </header>
+
+        <div className=\"terminal-grid\">\n          <div className=\"terminal-pane\">\n            <div className=\"pane-head\">\n              <span>RAW_OUTPUT.LOG</span>\n              <span className=\"pane-status\">LIVE</span>\n            </div>\n            <div className=\"pane-body\">\n              {toolLogs.map((log, i) => <div key={i} className=\"log-line\">{log}</div>)}\n              <div ref={toolRef} />\n            </div>\n          </div>\n          <div className=\"terminal-pane ai-pane\">\n            <div className=\"pane-head\">\n              <span>NEURAL_ANALYSIS.EXE</span>\n              <span className=\"pane-status ai-status\">ANALYZING</span>\n            </div>\n            <div className=\"pane-body\">\n              {aiLogs.map((log, i) => <div key={i} className=\"log-line ai-line\">{log}</div>)}\n              <div ref={aiRef} />\n            </div>\n          </div>\n        </div>\n      </main>
+
+      <aside className=\"hex-intel\">\n        <div className=\"intel-header\">STRIKE_HISTORY</div>\n        <div className=\"history-list\">\n          {history.length === 0 && <div className=\"empty-state\">No active vectors.</div>}\n          {history.map((h, i) => (\n            <div key={i} className=\"history-item\">\n              <div className=\"h-meta\">{h.timestamp}</div>\n              <div className=\"h-target\">{h.target}</div>\n              <div className=\"h-tool\">{h.tool}</div>\n              <div className=\"h-status\">{h.status}</div>\n            </div>\n          ))}\n        </div>\n      </aside>
+
+      {isCmdPaletteOpen && (\n        <div className=\"cmd-palette\" onClick={() => setIsCmdPaletteOpen(false)}>\n          <form onSubmit={handleCmdSubmit}>\n            <input \n              autoFocus\n              className=\"palette-input\"\n              placeholder=\"Run raw shell command...\"\n              value={cmdInput}\n              onChange={(e) => setCmdInput(e.target.value)}\n            />\n            <div className=\"palette-hint\">Press Enter to execute</div>\n          </form>\n        </div>\n      )}\n    </div>\n  );\n};\n\nexport default TerminalPage;

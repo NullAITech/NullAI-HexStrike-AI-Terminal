@@ -1,0 +1,26 @@
+[
+  {
+    "id": "full-recon",
+    "name": "Full Reconnaissance",
+    "description": " Comprehensive surface mapping: Nmap -> WhatWeb -> Nikto -> Gobuster",
+    "tools": ["nmap", "whatweb", "nikto", "gobuster"]
+  },
+  {
+    "id": "web-vuln",
+    "name": "Web Vulnerability Scan",
+    "description": " Targeted web attack: WhatWeb -> Nikto -> Sqlmap -> Wapiti",
+    "tools": ["whatweb", "nikto", "sqlmap", "wapiti"]
+  },
+  {
+    "id": "neural-probe",
+    "name": "Neural Surface Probe",
+    "description": " AI-focused scan: WhatWeb -> Garak -> Vigil -> LLMFuzzer",
+    "tools": ["whatweb", "garak", "vigil", "llmfuzzer"]
+  },
+  {
+    "id": "cred-blast",
+    "name": "Credential Blast",
+    "description": " Aggressive credential testing: Nmap -> Hydra -> John",
+    "tools": ["nmap", "hydra", "john"]
+  }
+]

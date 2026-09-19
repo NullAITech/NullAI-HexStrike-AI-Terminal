@@ -1,209 +1,133 @@
-# NullAI HexStrike Terminal 🧪🔴
+# HexStrike: Sovereign Security Studio
 
-> **Current Version:** v2.1.0 (Echo Update)  
-> **System:** Parrot OS 7 "Echo" Security Edition  
-> **Status:** Active / Stable
-
-**NullAI HexStrike** is an advanced, AI-augmented offensive security dashboard built specifically for **Parrot OS 7**. This platform bridges the gap between raw tool output (Nmap, Nikto, EmailHarvester) and autonomous intelligence, using a local, privacy-first LLM to analyze attack vectors in real-time.
+**NullAI** branding — HexStrike is a high-fidelity, AI-driven red teaming workstation designed for the modern offensive security operator. It transcends traditional tool wrappers by integrating a **Neural Intelligence Core** that not only executes strikes but analyzes them in real-time to map attack paths and automate the compromise lifecycle.
 
 ---
 
-## 🚨 CRITICAL UPDATE (2-1-26): Intelligence Core
+## Features
 
-To enable "Pro-Level" analysis without truncating reports, you must configure the **LocalAI** model settings as follows.
+### Neural Intelligence Core
+- **Real-Time Analysis** — Every tool output is streamed through a neural engine that identifies vulnerabilities and maps them to the MITRE ATT&CK framework
+- **Sovereign Playbooks** — Pre-defined attack chains (e.g., `Full Recon` → `Web Vuln` → `Cred Blast`) that execute tools sequentially
+- **Neural Autopilot** — Self-driving mode where the AI analyzes the current state and automatically triggers the next logical tool
+- **Target Intelligence Persistence** — Local storage of target profiles (`intel.json`), ensuring intelligence gathered in one session informs the next
 
-### 1. Model Requirement
-Download the specialized GGUF and place it in your `~/nullai_001/framework/models/` directory:
-- **Model:** `Hermes-3-Llama-3.2-3B-Q4_K_M.gguf`
-- **Alias:** `gpt-4`
+### Sovereign Arsenal (40+ Tools)
+- **AI Red Teaming**: `garak`, `llmfuzzer`, `vigil`, `iatelligence`
+- **Network Recon**: `nmap`, `masscan`, `amass`, `subfinder`, `rustscan`
+- **Web Exploitation**: `sqlmap`, `nikto`, `gobuster`, `ffuf`, `wapiti`, `xsstrike`, `nuclei`
+- **Credential Attacks**: `hydra`, `hashcat`, `john`, `cewl`
+- **Post-Exploitation**: `metasploit`, `bettercap`, `sliver`
+- **Cloud/Container**: `pacu`, `kubescape`, `trivy`, `scoutsuite`, `prowler`
+- **OSINT**: `theharvester`, `shodan`, `recondev`, `dnsenum`
 
-### 2. Enhanced YAML Configuration
-Create or update `~/nullai_001/framework/models/gpt-4.yaml` to prevent "mid-sentence cutoffs" and enforce strict security reasoning:
+### Operator Interface
+- **Void-Red Aesthetic** — High-contrast obsidian-and-blood-red theme with CRT scanlines
+- **Live-Wire Streaming** — Zero-latency output via Server-Sent Events (SSE)
+- **Command Palette** — Fast-access tool execution via `Ctrl + K`
+- **Sovereign Reporting** — One-click export of target intelligence into Markdown/HTML reports
 
+---
+
+## Architecture
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React + Vite (CRT shaders, dark theme) |
+| Backend | FastAPI + Python (async orchestration) |
+| Intelligence | LocalAI / GPT-4 (Neural reasoning layer) |
+| Tooling | Parrot OS / Kali Linux toolset |
+
+---
+
+## Installation
+
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
+- Git
+
+### 1. Clone the Repository
 ```bash
-name: gpt-4
-parameters:
-    model: Hermes-3-Llama-3.2-3B-Q4_K_M.gguf
-    temperature: 0.2     # Low for technical accuracy
-    max_tokens: 2000     # Generation ceiling (prevents cutoffs)
-    threads: 4           # LIMIT CPU USAGE (Prevents laptop overheating)
-context_size: 8192       # Expanded window for large scan logs
-
+git clone https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal.git
+cd NullAI-HexStrike-AI-Terminal
 ```
 
-    Note: You must restart the service after applying these changes:
-
-
+### 2. Initialize the Backend
 ```bash
-    systemctl --user restart localai.service
+chmod +x setup-backend.sh
+./setup-backend.sh
 ```
 
-🏗️ Architecture Overview
-
-This project implements a "Blood-Red" offensive pipeline using a four-tier architecture:
-
-    UI (React/Vite): A high-performance, split-pane dashboard for command execution and intelligence analysis.
-
-    Backend (FastAPI): The bridge logic that coordinates between the user, the tools, and the local brain.
-
-    HexStrike Server: The "Muscle" that executes native security tools (EmailHarvester, Nmap, SQLmap, etc.) on the Parrot OS system.
-
-    LocalAI (Podman): The "Brain" running locally as a system service to analyze logs and suggest attack vectors.
-
-🚦 System Port Mapping
-
-To avoid conflicts with existing Parrot OS services, we utilize the following port standards:
-Service	Port	Description
-Frontend	5173	React/Vite UI Dashboard
-Backend	8000	FastAPI Bridge (Python)
-HexStrike	8888	HexStrike AI MCP Server
-LocalAI	8090	Local Intelligence Core (Podman)
-🚀 Installation & Setup
-1. Prerequisites
-
-Ensure your Parrot OS system is updated and the core engines are installed:
-
+### 3. Launch the Neural Core (LocalAI)
 ```bash
-
-sudo apt update && sudo apt install hexstrike-ai podman
-
+chmod +x setup-localai.sh
+./setup-localai.sh
 ```
 
-2. Configure the "Brain" (LocalAI)
-
-We use a Podman Quadlet to run the AI as a system service. This configuration includes Resource Throttling to prevent system lockups.
-
-A. Create Directories:
-
+### 4. Start the UI
 ```bash
-
-mkdir -p ~/nullai_001/framework/models
-mkdir -p ~/.config/containers/systemd
-
+chmod +x setup-ui.sh
+./setup-ui.sh
 ```
 
-B. Create the Optimized Service File: Create the file ~/.config/containers/systemd/localai.container and paste the following:
+---
 
+## Usage
 
-```bash
+1. **Set Target** — Enter an IP or domain in the `TARGET_VECTOR` bar
+2. **Select Vector** — Choose a single tool or a **Sovereign Playbook** for automated chaining
+3. **Execute** — Click `EXECUTE STRIKE`
+4. **Analyze** — Watch `RAW_OUTPUT` stream and `NEURAL_ANALYSIS` vulnerability matrix
+5. **Automate** — Toggle `AUTOPILOT` to let the AI drive the compromise
+6. **Export** — Click `EXPORT REPORT` to save findings
 
-[Unit]
-Description=LocalAI Offensive Intelligence Core
-After=network-online.target
+---
 
-[Container]
-Image=docker.io/localai/localai:latest-aio-cpu
-ContainerName=local-ai
-# Map Host 8090 -> Container 8080
-PublishPort=8090:8080
-Volume=%h/nullai_001/framework/models:/models:rw
+## API Endpoints
 
-# --- RESOURCE THROTTLING (App Level) ---
-Environment=THREADS=4
-Environment=DEBUG=true
-Environment=MODELS_PATH=/models
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/analytics` | Returns strike statistics, tool success rates, top targets |
+| POST | `/api/report/generate` | Generate an HTML report for a target (or all targets) |
+| GET | `/api/report/download` | Download a generated report by ID or latest |
 
-[Service]
-# --- RAM & CPU CAPPING (System Level) ---
-# Hard limit: Kill container if it hits 6GB
-MemoryMax=6G
-# Soft limit: Aggressively reclaim memory at 4GB
-MemoryHigh=4G
-# Low CPU priority to keep UI snappy
-CPUWeight=20
-Restart=always
-
-[Install]
-WantedBy=default.target
-
+### Analytics Response
+```json
+{
+  "total_strikes": 42,
+  "success_rate_by_tool": {"nmap": 95.2, "sqlmap": 87.5},
+  "avg_compromise_time_seconds": 12.4,
+  "top_targets": [{"target": "192.168.1.1", "strikes": 10}],
+  "unique_tools": 8,
+  "unique_targets": 5
+}
 ```
 
-C. Activate the Service:
+---
 
-```bash
+## Tool Categories
 
-systemctl --user daemon-reload
-systemctl --user start localai.service
-sudo loginctl enable-linger $USER
-```
+| Category | Tools |
+|----------|-------|
+| AI Red Teaming | garak, llmfuzzer, vigil, iatelligence |
+| Network Recon | nmap, masscan, amass, subfinder, rustscan |
+| Web Exploitation | sqlmap, nikto, gobuster, ffuf, wapiti, xsstrike, nuclei |
+| Credential Attacks | hydra, hashcat, john |
+| Post-Exploitation | metasploit, bettercap, sliver |
+| Cloud/Container | pacu, kubescape, trivy, scoutsuite, prowler |
+| OSINT | theharvester, shodan, recondev, dnsenum |
 
-3. Setup the Backend Bridge
+---
 
-```bash
+## Screenshots
 
-cd ~/nullai_001/backend
-python3 -m venv venv
-source venv/bin/activate
-pip install fastapi uvicorn requests pydantic
+> _Screenshots placeholder — add operational screenshots here_
 
-```
+---
 
-4. Setup the UI
+## License
 
-```bash
+MIT License — see [LICENSE](LICENSE) for details.
 
-cd ~/nullai_001/ui
-npm install
-
-
-```
-
-🛠️ Running the Framework
-
-Start the services in this specific order to ensure proper handshakes:
-
-    HexStrike Server:
-
-```bash
-
-hexstrike_server --port 8888
-
-```
-
-FastAPI Backend:
-
-```bash
-
-# From ~/nullai_001/backend
-python3 main.py
-
-```
-
-React Dashboard:
-
-```bash
-
-    # From ~/nullai_001/ui
-    npm run dev
-```
-### 🧠 Offensive Intelligence Features
-
-    Split-Pane Execution: View raw STDOUT from tools (left) and LocalAI reasoning (right) side-by-side.
-
-    Persona-Driven Analysis: The AI is configured as a "Red Team Lead," providing concise, actionable exploitation summaries via the hex_bridge.py.
-
-    Parrot OS 7 Integration: Native support for:
-
-        EmailHarvester: Domain-based email OSINT.
-
-        Nikto/SQLMap: Vulnerability scanning.
-
-        TruffleHog: Secret scanning in repositories.
-
-    Shadow Service Detection: Identifies automation tools like n8n (port 5678) and analyzes their security posture.
-
-### 🔒 Legal & Customization
-
-#### NullAI.tech Disclaimer: This tool is for authorized penetration testing and educational purposes only. Unauthorized use on systems you do not own is illegal.
-
-🍴 Fork and Customize
-
-This project is part of the NullAI Ecosystem. You are encouraged to:
-
-    Add Modules: Expand hex_bridge.py with new tools (e.g., Metasploit, Hydra).
-
-    UI Themes: Modify index.css to create custom "Cyber-Gothic" themes.
-
-    Swap Models: Drop any GGUF into the /models folder and update your YAML config.
-
-Maintained by Neo @ NullAI.tech
+**STATUS**: `Sovereign` | **KERNEL**: `Stable` | **INTELLIGENCE**: `Active`
