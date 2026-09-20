@@ -53,6 +53,15 @@ class StrikeRequest(BaseModel):
     tool: str
     target: str
 
+class SessionSaveRequest(BaseModel):
+    name: str
+    target: str
+    tool_logs: list = []
+    ai_logs: list = []
+    settings: dict = {}
+    compromise_level: int = 0
+    tool_history: list = []
+
 class ScheduleStrikeRequest(BaseModel):
     tool: str
     target: str
@@ -83,13 +92,44 @@ async def export_report(target: str):
     intel = bridge._get_target_intel(target)
     if not intel or not intel["history"]:
         return {"error": "No intelligence found for target."}
-    
-    report = f"# HexStrike Sovereign Report: {target}\\n"
-    report += f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\\n\\n"
-    report += "## Strike History\\n"
-    for h in intel["history"]:
-        report += f"### {h['tool']} ({h['timestamp']})\\n{h['output']}\\n\\n"
-    
+
+    report = f"# HexStrike Sovereign Report: {target}\n"
+    report += f"**Generated:** {dt.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+    report += "---\n\n"
+
+    # Target info
+    report += "## Target Information\n\n"
+    report += f"- **Target:** `{target}`\n"
+    if intel.get("dns"):
+        report += f"- **DNS:** {intel['dns']}\n"
+    if intel.get("whois"):
+        report += f"- **WHOIS:** {intel['whois']}\n"
+    report += "\n"
+
+    # Summary stats
+    total_strikes = len(intel["history"])
+    tools_used = set(h["tool"] for h in intel["history"])
+    report += "## Summary\n\n"
+    report += f"- **Total Strikes:** {total_strikes}\n"
+    report += f"- **Tools Used:** {', '.join(sorted(tools_used))}\n"
+    report += f"- **Findings:** {len(intel.get('findings', {}))}\n\n"
+
+    # Strike history with full logs
+    report += "## Strike History\n\n"
+    for i, h in enumerate(intel["history"], 1):
+        report += f"### {i}. {h['tool']} — `{h['timestamp']}`\n\n"
+        report += f"**Status:** {h.get('status', 'UNKNOWN')}\n\n"
+        report += f"**Output:**\n```\n{h.get('output', 'N/A')}\n```\n\n"
+
+    # AI findings
+    if intel.get("findings"):
+        report += "## AI Findings\n\n"
+        for fk, fv in intel["findings"].items():
+            report += f"- **{fk}:** {fv}\n"
+        report += "\n"
+
+    report += "---\n*HexStrike AI — Classified — For Authorized Use Only*"
+
     return {"report": report}
 
 @app.get("/execute-stream")
@@ -110,8 +150,8 @@ async def ping_target(host: str):
     except Exception as e:
         return {"host": host, "reachable": False, "error": str(e)}
 
-@app.get("/api/session/save")
-async def save_session(name: str, target: str):
+@app.post("/api/session/save")
+async def save_session(req: SessionSaveRequest):
     import json, os
     session_path = os.path.expanduser("~/.hexstrike/sessions.json")
     os.makedirs(os.path.dirname(session_path), exist_ok=True)
@@ -119,10 +159,18 @@ async def save_session(name: str, target: str):
     if os.path.exists(session_path):
         with open(session_path) as f:
             sessions = json.load(f)
-    sessions[name] = {"target": target, "saved_at": datetime.now().isoformat()}
+    sessions[req.name] = {
+        "target": req.target,
+        "tool_logs": req.tool_logs[-200:],
+        "ai_logs": req.ai_logs[-200:],
+        "settings": req.settings,
+        "compromise_level": req.compromise_level,
+        "tool_history": req.tool_history[-50:],
+        "saved_at": dt.now().isoformat(),
+    }
     with open(session_path, "w") as f:
         json.dump(sessions, f, indent=2)
-    return {"status": "saved", "name": name}
+    return {"status": "saved", "name": req.name}
 
 @app.get("/api/session/load")
 async def load_session(name: str):
@@ -143,6 +191,21 @@ async def list_sessions():
     with open(session_path) as f:
         sessions = json.load(f)
     return {"sessions": sessions}
+
+@app.delete("/api/session/delete")
+async def delete_session(name: str):
+    import json, os
+    session_path = os.path.expanduser("~/.hexstrike/sessions.json")
+    if not os.path.exists(session_path):
+        return {"error": "No sessions found"}
+    with open(session_path) as f:
+        sessions = json.load(f)
+    if name in sessions:
+        del sessions[name]
+        with open(session_path, "w") as f:
+            json.dump(sessions, f, indent=2)
+        return {"status": "deleted", "name": name}
+    return {"error": f"Session '{name}' not found"}
 
 @app.get("/api/export-json")
 async def export_json(target: str):

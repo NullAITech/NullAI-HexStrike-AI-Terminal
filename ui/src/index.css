@@ -30,6 +30,8 @@ body, html, #root {
   pointer-events: none;
   background-size: 100% 4px, 3px 100%;
   opacity: 0.3;
+  will-change: transform;
+  content-visibility: auto;
 }
 
 .crt-flicker {
@@ -40,6 +42,11 @@ body, html, #root {
   z-index: 10000;
   pointer-events: none;
   animation: flicker 0.15s infinite;
+}
+
+.crt-flicker-paused {
+  animation: none !important;
+  opacity: 0 !important;
 }
 
 @keyframes flicker {
@@ -533,6 +540,123 @@ body, html, #root {
 .save-btn:hover {
   background: #ff4d4d;
   box-shadow: 0 0 15px var(--blood-red);
+}
+
+/* --- HELP MODAL --- */
+.help-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 10003;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.help-modal {
+  background: #0a0a0a;
+  border: 1px solid var(--blood-red);
+  width: 480px;
+  max-width: 90vw;
+  padding: 25px;
+  box-shadow: 0 0 40px var(--glow-red);
+  animation: paletteSlide 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.help-header {
+  font-family: 'Orbitron';
+  color: var(--blood-red);
+  font-size: 1rem;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--dark-red);
+  padding-bottom: 10px;
+}
+
+.help-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.help-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+}
+
+.help-key {
+  font-family: 'Orbitron';
+  color: #fff;
+  font-size: 0.75rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid var(--dark-red);
+  padding: 3px 10px;
+  min-width: 90px;
+  text-align: center;
+}
+
+.help-desc {
+  color: var(--text-dim);
+  font-family: 'Fira Code';
+  font-size: 0.75rem;
+}
+
+/* --- AUTO-COMPLETE DROPDOWN --- */
+.autocomplete-dropdown {
+  flex-shrink: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 4px;
+  border: 1px solid var(--dark-red);
+  background: #0a0a0a;
+  scrollbar-width: thin;
+  scrollbar-color: var(--dark-red) transparent;
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  font-size: 0.85rem;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item-active {
+  background: rgba(255, 0, 0, 0.12);
+  border-left: 2px solid var(--blood-red);
+}
+
+.autocomplete-type {
+  font-size: 0.9rem;
+  width: 20px;
+  text-align: center;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.autocomplete-label {
+  color: #00ff41;
+  font-family: 'Fira Code';
+  font-weight: bold;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.autocomplete-name {
+  color: var(--text-dim);
+  font-family: 'Fira Code';
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* --- COMMAND PALETTE --- */
@@ -1298,7 +1422,7 @@ body, html, #root {
     left: 50%;
     transform: translate(-50%, 0);
   }
-  .settings-modal, .templates-modal {
+  .help-modal, .settings-modal, .templates-modal {
     width: 90vw;
     margin: 10px;
   }
@@ -1415,7 +1539,111 @@ body, html, #root {
     display: flex;
   }
 }
-/* --- TOOL SEARCH --- */
+/* --- SESSION MANAGER --- */
+.session-item {
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.session-item:hover {
+  background: rgba(255, 0, 0, 0.08);
+  border-color: var(--dark-red);
+}
+
+.session-item .session-target {
+  color: var(--text-dim);
+  font-size: 0.55rem;
+  font-family: 'Orbitron';
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.session-item .session-del-btn {
+  background: transparent;
+  border: 1px solid #333;
+  color: #666;
+  font-family: 'Orbitron';
+  font-size: 0.5rem;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.session-item .session-del-btn:hover {
+  color: #ff0000;
+  border-color: #ff0000;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+}
+
+.session-item .session-name {
+  color: var(--blood-red);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.session-item .session-name:hover {
+  text-decoration: underline;
+  text-shadow: 0 0 5px var(--glow-red);
+}
+
+.session-empty {
+  font-size: 0.6rem;
+  color: #555;
+  text-align: center;
+  padding: 8px;
+  font-style: italic;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.session-count {
+  font-size: 0.5rem;
+  color: var(--text-dim);
+  font-weight: normal;
+}
+
+/* --- EXPORT BUTTON --- */
+.report-btn {
+  background: transparent;
+  border: 1px solid var(--dark-red);
+  color: var(--accent-gold);
+  font-family: 'Orbitron';
+  font-size: 0.6rem;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.report-btn:hover {
+  color: #fff;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.report-format-select {
+  background: #000;
+  border: 1px solid var(--dark-red);
+  color: var(--accent-gold);
+  font-family: 'Orbitron';
+  font-size: 0.55rem;
+  padding: 2px 4px;
+  cursor: pointer;
+  outline: none;
+}
+
+.report-format-select:focus {
+  border-color: var(--accent-gold);
+}
 .tool-search {
   position: relative;
   padding: 10px 15px;
@@ -1711,7 +1939,258 @@ body, html, #root {
   text-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
 }
 
-/* --- RESPONSIVE: Modal --- */
+/* --- BATCH EXECUTION --- */
+.batch-active {
+  border-color: #fbbf24 !important;
+  color: #fbbf24 !important;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.4) !important;
+}
+
+.batch-progress-bar {
+  height: 6px;
+  background: #111;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--dark-red);
+}
+
+.batch-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #fbbf24, #00ff41);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+}
+
+.batch-progress-text {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Orbitron';
+  font-size: 0.55rem;
+  color: #fbbf24;
+  text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+  line-height: 6px;
+  white-space: nowrap;
+}
+
+/* --- CHAIN STATUS BAR --- */
+.chain-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 20px;
+  background: #080808;
+  border-bottom: 1px solid var(--dark-red);
+  font-size: 0.65rem;
+  flex-wrap: wrap;
+  min-height: 32px;
+}
+
+.chain-status-label {
+  font-family: 'Orbitron';
+  color: var(--blood-red);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.chain-arrow {
+  color: #666;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.chain-step {
+  padding: 3px 10px;
+  border: 1px solid #333;
+  background: rgba(255, 0, 0, 0.05);
+  font-family: 'Orbitron';
+  font-size: 0.55rem;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chain-step:hover {
+  border-color: var(--blood-red);
+  background: rgba(255, 0, 0, 0.15);
+  color: #fff;
+}
+
+.chain-step-status {
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+/* --- CHAIN BUTTON --- */
+.chain-btn {
+  font-size: 0.55rem !important;
+  padding: 4px 10px !important;
+}
+
+.chain-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
+/* --- TOOL SELECTION IN BATCH MODE --- */
+.tool-btn.batch-selected {
+  background: rgba(251, 191, 36, 0.2) !important;
+  color: #fbbf24 !important;
+  border-left: 3px solid #fbbf24 !important;
+}
+
+.tool-btn.batch-selected .fav-star {
+  color: #fbbf24 !important;
+  opacity: 1 !important;
+}
+
+.batch-select-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #fbbf24;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+  font-size: 0.6rem;
+  line-height: 8px;
+  text-align: center;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
+}
+
+.batch-select-indicator.selected {
+  background: #fbbf24;
+  color: #000;
+}
+
+/* --- RUN BATCH BUTTON --- */
+.batch-run-btn {
+  background: #fbbf24 !important;
+  color: #000 !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.4) !important;
+  font-family: 'Orbitron' !important;
+  font-size: 0.6rem !important;
+}
+
+.batch-run-btn:hover:not(:disabled) {
+  background: #fcd34d !important;
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.6) !important;
+}
+
+.batch-run-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- CHAIN BUILDER PANEL --- */
+.chain-builder {
+  padding: 10px 20px;
+  background: #080808;
+  border-bottom: 1px solid var(--dark-red);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chain-builder-input {
+  background: #000;
+  border: 1px solid var(--dark-red);
+  color: #fff;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  outline: none;
+  width: 200px;
+  transition: border-color 0.3s;
+}
+
+.chain-builder-input:focus {
+  border-color: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.chain-builder-add {
+  background: #fbbf24;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  font-family: 'Orbitron';
+  font-size: 0.6rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chain-builder-add:hover {
+  background: #fcd34d;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+}
+
+.chain-builder-add:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.chain-builder-hint {
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  font-family: 'Orbitron';
+}
+
+/* --- BATCH SELECT TOGGLE IN SIDEBAR --- */
+.batch-toggle-sidebar {
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--dark-red);
+  background: #0a0a0a;
+}
+
+.batch-toggle-sidebar-label {
+  font-family: 'Orbitron';
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.batch-toggle-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #fbbf24;
+  cursor: pointer;
+}
+
+/* --- RESPONSIVE: Chain Status Bar --- */
+@media (max-width: 900px) {
+  .chain-status-bar {
+    padding: 4px 10px;
+    gap: 4px;
+  }
+  .chain-step {
+    padding: 2px 6px;
+    font-size: 0.5rem;
+  }
+  .batch-progress-bar {
+    height: 4px;
+  }
+  .batch-progress-text {
+    font-size: 0.45rem;
+  }
+}
 @media (max-width: 600px) {
   .modal-content {
     width: 95vw;

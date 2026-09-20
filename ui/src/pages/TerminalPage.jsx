@@ -56,6 +56,28 @@ const TerminalPage = () => {
   const [toolSearch, setToolSearch] = useState('');
   const [favorites, setFavorites] = useState([]);
   const [showToolDetail, setShowToolDetail] = useState(false);
+  // Batch execution
+  const [batchSelected, setBatchSelected] = useState([]);
+  const [batchMode, setBatchMode] = useState(false);
+  const [batchProgress, setBatchProgress] = useState(0);
+  const [batchCurrentTool, setBatchCurrentTool] = useState('');
+  const [batchQueue, setBatchQueue] = useState([]);
+  const [batchRunning, setBatchRunning] = useState(false);
+  // Tool chaining
+  const [chainTools, setChainTools] = useState([]);
+  const [chainInput, setChainInput] = useState('');
+  const [chainRunning, setChainRunning] = useState(false);
+  const [chainStep, setChainStep] = useState(0);
+  const [chainResults, setChainResults] = useState([]);
+  // Keyboard shortcut help modal
+  const [showHelp, setShowHelp] = useState(false);
+  // Visual effects
+  const [crtFlicker, setCrtFlicker] = useState(true);
+  const [density, setDensity] = useState('medium'); // low/medium/high for matrix rain
+  // Auto-completion
+  const [showAutoComplete, setShowAutoComplete] = useState(false);
+  const [autoCompleteResults, setAutoCompleteResults] = useState([]);
+  const [autoCompleteIndex, setAutoCompleteIndex] = useState(0);
 
   // Load favorites from localStorage
   useEffect(() => {
@@ -87,6 +109,12 @@ const TerminalPage = () => {
   const nonFavoritedTools = filteredTools.filter(t => !favorites.includes(t.id));
 
   const handleToolClick = (toolId, category) => {
+    if (batchMode) {
+      setBatchSelected(prev =>
+        prev.includes(toolId) ? prev.filter(id => id !== toolId) : [...prev, toolId]
+      );
+      return;
+    }
     setSelectedToolId(toolId);
     setActiveCategory(category);
     setShowToolDetail(true);
@@ -128,6 +156,10 @@ const TerminalPage = () => {
         e.preventDefault();
         if (sessionName && target) saveSession();
         else addToast('Enter a session name first', 'error');
+      }
+      if (e.ctrlKey && e.key === '/') {
+        e.preventDefault();
+        setShowHelp(prev => !prev);
       }
     };
     const handleFocus = () => setFocusVisible(true);
@@ -197,7 +229,21 @@ const TerminalPage = () => {
     active?.scrollIntoView({ block: 'nearest' });
   }, [cmdActiveIndex, isCmdPaletteOpen]);
 
-  // Close palette on Escape
+  // Auto-completion: filter tools by partial name/id match
+  useEffect(() => {
+    if (!isCmdPaletteOpen || !cmdInput.trim()) {
+      setShowAutoComplete(false);
+      setAutoCompleteResults([]);
+      return;
+    }
+    const q = cmdInput.toLowerCase().trim();
+    const matches = toolRegistry.filter(t =>
+      t.id.toLowerCase().startsWith(q) || t.name.toLowerCase().includes(q)
+    ).slice(0, 8);
+    setAutoCompleteResults(matches);
+    setAutoCompleteIndex(0);
+    setShowAutoComplete(matches.length > 0);
+  }, [cmdInput, isCmdPaletteOpen]);
   useEffect(() => {
     if (!isCmdPaletteOpen) return;
     const onKey = (e) => {
@@ -321,7 +367,141 @@ const TerminalPage = () => {
     }
   }, [target]);
 
-const addToast = (message, type = 'info') => {
+const executeBatch = async () => {
+    if (batchSelected.length === 0 || !target || batchRunning) return;
+    setBatchRunning(true);
+    setBatchProgress(0);
+    setToolLogs(prev => [...prev, `\n[SYSTEM] > BATCH MODE: Running ${batchSelected.length} tools on ${target}...`]);
+    setAiLogs(prev => [...prev, '\n[SYSTEM] > BATCH SEQUENCE INITIATED...']);
+    setShowLiveOutput(true);
+
+    const results = [];
+    for (let i = 0; i < batchSelected.length; i++) {
+      const toolId = batchSelected[i];
+      const toolName = toolRegistry.find(t => t.id === toolId)?.name || toolId;
+      setBatchCurrentTool(toolName);
+      setBatchProgress(Math.floor(((i) / batchSelected.length) * 100));
+      setToolLogs(prev => [...prev, `\n[BATCH] > [${i+1}/${batchSelected.length}] Starting ${toolName}...`]);
+      setAiLogs(prev => [...prev, `[BATCH] Executing ${toolName} (${i+1}/${batchSelected.length})`]);
+
+      try {
+        const eventSource = new EventSource(`http://localhost:8000/execute-stream?tool=${toolId}&target=${target}`);
+        let output = '';
+        await new Promise((resolve, reject) => {
+          eventSource.onmessage = (event) => {
+            const rawData = event.data.replace(/\\n/g, '\n');
+            const lines = rawData.split('\n').filter(line => line.trim() !== '');
+            lines.forEach(line => {
+              output += line + '\n';
+              setToolLogs(prev => [...prev, line]);
+              setLiveOutput(prev => [...prev, line]);
+              if (line.startsWith('AI_ANALYSIS:')) {
+                setAiLogs(prev => [...prev, line.replace('AI_ANALYSIS: ', '')]);
+              }
+            });
+          };
+          eventSource.onerror = () => { eventSource.close(); resolve(); };
+          setTimeout(() => { eventSource.close(); resolve(); }, 30000);
+        });
+        results.push({ toolId, toolName, status: 'SUCCESS', output });
+        setToolLogs(prev => [...prev, `[BATCH] ✓ ${toolName} complete`]);
+      } catch (err) {
+        results.push({ toolId, toolName, status: 'FAILED', error: err.message });
+        setToolLogs(prev => [...prev, `[BATCH] ✗ ${toolName} failed: ${err.message}`]);
+      }
+
+      setBatchProgress(Math.floor(((i + 1) / batchSelected.length) * 100));
+    }
+
+    setBatchRunning(false);
+    setBatchCurrentTool('');
+    setScanProgress(100);
+    addToast(`Batch complete: ${results.filter(r => r.status === 'SUCCESS').length}/${results.length} succeeded`, 'success');
+    setHistory(prev => [{ timestamp: new Date().toLocaleTimeString(), target, tool: 'BATCH', status: 'SUCCESS' }, ...prev].slice(0, 10));
+  };
+
+  const addToChain = (toolId) => {
+    if (chainTools.includes(toolId)) {
+      setChainTools(chainTools.filter(id => id !== toolId));
+      setChainResults(chainResults.filter(r => r.toolId !== toolId));
+    } else {
+      setChainTools([...chainTools, toolId]);
+    }
+  };
+
+  const removeFromChain = (index) => {
+    setChainTools(chainTools.filter((_, i) => i !== index));
+    setChainResults(chainResults.filter((_, i) => i !== index));
+  };
+
+  const clearChain = () => {
+    setChainTools([]);
+    setChainResults([]);
+    setChainStep(0);
+    setChainRunning(false);
+  };
+
+  const executeChain = async () => {
+    if (chainTools.length === 0 || !target || chainRunning) return;
+    setChainRunning(true);
+    setChainStep(0);
+    setToolLogs(prev => [...prev, `\n[CHAIN] > Starting attack chain: ${chainTools.map(id => toolRegistry.find(t=>t.id===id)?.name || id).join(' → ')}`]);
+    setAiLogs(prev => [...prev, '\n[CHAIN] > Sequential exploitation pipeline initialized...']);
+    setShowLiveOutput(true);
+
+    const results = [];
+    let chainInput = target;
+
+    for (let i = 0; i < chainTools.length; i++) {
+      const toolId = chainTools[i];
+      const toolName = toolRegistry.find(t => t.id === toolId)?.name || toolId;
+      setChainStep(i + 1);
+      setBatchCurrentTool(`${toolName} (${i+1}/${chainTools.length})`);
+      setToolLogs(prev => [...prev, `\n[CHAIN] > Step ${i+1}/${chainTools.length}>: ${toolName} on ${chainInput}`]);
+      setAiLogs(prev => [...prev, `[CHAIN] Step ${i+1}: ${toolName} — input: ${chainInput}`]);
+
+      try {
+        const eventSource = new EventSource(`http://localhost:8000/execute-stream?tool=${toolId}&target=${encodeURIComponent(chainInput)}`);
+        let output = '';
+        await new Promise((resolve, reject) => {
+          eventSource.onmessage = (event) => {
+            const rawData = event.data.replace(/\\n/g, '\n');
+            const lines = rawData.split('\n').filter(line => line.trim() !== '');
+            lines.forEach(line => {
+              output += line + '\n';
+              setToolLogs(prev => [...prev, line]);
+              setLiveOutput(prev => [...prev, line]);
+              if (line.startsWith('AI_ANALYSIS:')) {
+                setAiLogs(prev => [...prev, line.replace('AI_ANALYSIS: ', '')]);
+              }
+              if (line.match(/open\s+\d+/i)) {
+                const portMatch = line.match(/open\s+(\d+)/i);
+                if (portMatch) chainInput = `${chainInput}:${portMatch[1]}`;
+              }
+            });
+          };
+          eventSource.onerror = () => { eventSource.close(); resolve(); };
+          setTimeout(() => { eventSource.close(); resolve(); }, 30000);
+        });
+        results.push({ toolId, toolName, status: 'SUCCESS', output });
+        setChainResults([...results, { toolId, toolName, status: 'SUCCESS', output }]);
+        setToolLogs(prev => [...prev, `[CHAIN] ✓ Step ${i+1}: ${toolName} complete`]);
+      } catch (err) {
+        results.push({ toolId, toolName, status: 'FAILED', error: err.message });
+        setChainResults([...results, { toolId, toolName, status: 'FAILED', error: err.message }]);
+        setToolLogs(prev => [...prev, `[CHAIN] ✗ Step ${i+1}: ${toolName} failed: ${err.message}`]);
+        break;
+      }
+    }
+
+    setChainRunning(false);
+    setBatchCurrentTool('');
+    setScanProgress(100);
+    const successCount = results.filter(r => r.status === 'SUCCESS').length;
+    addToast(`Chain complete: ${successCount}/${chainTools.length} steps succeeded`, successCount === chainTools.length ? 'success' : 'error');
+  };
+
+  const addToast = (message, type = 'info') => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message, type }]);
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 5000);
@@ -439,17 +619,55 @@ const addToast = (message, type = 'info') => {
   const saveSession = async () => {
     if (!sessionName || !target) return;
     try {
-      await axios.get(`http://localhost:8000/api/session/save?name=${sessionName}&target=${target}`);
+      await axios.post('http://localhost:8000/api/session/save', {
+        name: sessionName,
+        target,
+        tool_logs: toolLogs,
+        ai_logs: aiLogs,
+        settings: { fontSize, scanlineActive, glitchActive, matrixRain, stealthMode, theme },
+        compromise_level: compromiseLevel,
+        tool_history: history,
+      });
       addToast(`Session "${sessionName}" saved`, 'success');
       setSessionName('');
+      // Refresh session list
+      axios.get('http://localhost:8000/api/session/list')
+        .then(res => setSessions(res.data.sessions || {}))
+        .catch(() => {});
     } catch { addToast('Save Failed', 'error'); }
   };
 
   const loadSession = async (name) => {
     try {
       const res = await axios.get(`http://localhost:8000/api/session/load?name=${name}`);
-      if (res.data.target) { setTarget(res.data.target); addToast(`Loaded "${name}"`, 'info'); }
+      const data = res.data;
+      if (data.error) { addToast(data.error, 'error'); return; }
+      if (data.target) setTarget(data.target);
+      if (data.tool_logs) setToolLogs(data.tool_logs);
+      if (data.ai_logs) setAiLogs(data.ai_logs);
+      if (data.settings) {
+        setFontSize(data.settings.fontSize || 14);
+        setScanlineActive(data.settings.scanlineActive !== false);
+        setGlitchActive(data.settings.glitchActive !== false);
+        setMatrixRain(data.settings.matrixRain !== false);
+        setStealthMode(data.settings.stealthMode || false);
+        setTheme(data.settings.theme || 'void-red');
+      }
+      if (data.compromise_level !== undefined) setCompromiseLevel(data.compromise_level);
+      if (data.tool_history) setHistory(data.tool_history);
+      addToast(`Loaded "${name}"`, 'info');
     } catch { addToast('Load Failed', 'error'); }
+  };
+
+  const deleteSession = async (name) => {
+    if (!window.confirm(`Delete session "${name}"?`)) return;
+    try {
+      await axios.delete(`http://localhost:8000/api/session/delete?name=${encodeURIComponent(name)}`);
+      addToast(`Session "${name}" deleted`, 'info');
+      axios.get('http://localhost:8000/api/session/list')
+        .then(res => setSessions(res.data.sessions || {}))
+        .catch(() => {});
+    } catch { addToast('Delete Failed', 'error'); }
   };
 
   const handleCmdSubmit = (e) => {
@@ -500,6 +718,12 @@ const addToast = (message, type = 'info') => {
     if (e.key === 'Enter') {
       e.preventDefault();
       handleCmdSubmit(e);
+    }
+    if (e.key === 'Tab' && autoCompleteResults.length > 0) {
+      e.preventDefault();
+      const next = (autoCompleteIndex + 1) % autoCompleteResults.length;
+      setAutoCompleteIndex(next);
+      setCmdInput(autoCompleteResults[next].id);
     }
   };
 
@@ -648,9 +872,9 @@ const addToast = (message, type = 'info') => {
 
   return (
     <div className={`hex-studio ${stealthMode ? 'stealth-mode' : ''}`}>
-      {matrixRain && <CanvasRain />}
+      {matrixRain && <CanvasRain density={density} />}
       {scanlineActive && <div className="crt-overlay" />}
-      <div className="crt-flicker" />
+      <div className={`crt-flicker ${crtFlicker ? '' : 'crt-flicker-paused'}`} />
 
       <aside className="hex-sidebar">
         <div className="sidebar-brand">
@@ -674,6 +898,27 @@ const addToast = (message, type = 'info') => {
           )}
         </div>
 
+        {/* Batch Selection Toggle */}
+        {batchMode && (
+          <div className="batch-toggle-sidebar">
+            <div className="batch-toggle-sidebar-label">
+              <input
+                type="checkbox"
+                className="batch-toggle-checkbox"
+                checked={batchSelected.length === filteredTools.length && filteredTools.length > 0}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setBatchSelected(filteredTools.map(t => t.id));
+                  } else {
+                    setBatchSelected([]);
+                  }
+                }}
+              />
+              SELECT ALL ({batchSelected.length}/{filteredTools.length})
+            </div>
+          </div>
+        )}
+
         <nav className="category-nav">
           {/* Favorites Section */}
           {favorites.length > 0 && (
@@ -683,7 +928,7 @@ const addToast = (message, type = 'info') => {
                 {favoritedTools.map(t => (
                   <button
                     key={t.id}
-                    className={`tool-btn ${selectedToolId === t.id ? 'active' : ''}`}
+                    className={`tool-btn ${selectedToolId === t.id ? 'active' : ''} ${batchSelected.includes(t.id) ? 'batch-selected' : ''}`}
                     onClick={() => handleToolClick(t.id, t.category)}
                   >
                     <span className="tool-id">{t.id}</span> {t.name}
@@ -692,6 +937,7 @@ const addToast = (message, type = 'info') => {
                       onClick={(e) => { e.stopPropagation(); toggleFavorite(t.id); }}
                       title="Remove from favorites"
                     >★</span>
+                    {batchMode && <span className={`batch-select-indicator ${batchSelected.includes(t.id) ? 'selected' : ''}`}>{batchSelected.includes(t.id) ? '☑' : '☐'}</span>}
                   </button>
                 ))}
               </div>
@@ -717,13 +963,13 @@ const addToast = (message, type = 'info') => {
               {playbookRegistry.map(p => (
                 <button 
                   key={p.id} 
-                  className={`tool-btn ${selectedToolId === p.id ? 'active' : ''}`}
+                  className={`tool-btn ${selectedToolId === p.id ? 'active' : ''} ${batchSelected.includes(p.id) ? 'batch-selected' : ''}`}
                   onClick={() => {
-                    setSelectedToolId(p.id);
-                    setActiveCategory('playbooks');
+                    handleToolClick(p.id, 'playbooks');
                   }}
                 >
                   <span className="tool-id">{p.id}</span> {p.name}
+                  {batchMode && <span className={`batch-select-indicator ${batchSelected.includes(p.id) ? 'selected' : ''}`}>{batchSelected.includes(p.id) ? '☑' : '☐'}</span>}
                 </button>
               ))}
             </div>
@@ -741,7 +987,7 @@ const addToast = (message, type = 'info') => {
                 {nonFavoritedTools.filter(t => t.category === cat).map(t => (
                   <button
                     key={t.id}
-                    className={`tool-btn ${selectedToolId === t.id ? 'active' : ''}`}
+                    className={`tool-btn ${selectedToolId === t.id ? 'active' : ''} ${batchSelected.includes(t.id) ? 'batch-selected' : ''}`}
                     onClick={() => handleToolClick(t.id, t.category)}
                   >
                     <span className="tool-id">{t.id}</span> {t.name}
@@ -750,6 +996,7 @@ const addToast = (message, type = 'info') => {
                       onClick={(e) => { e.stopPropagation(); toggleFavorite(t.id); }}
                       title={isFavorited(t.id) ? 'Remove from favorites' : 'Add to favorites'}
                     >{isFavorited(t.id) ? '★' : '☆'}</span>
+                    {batchMode && <span className={`batch-select-indicator ${batchSelected.includes(t.id) ? 'selected' : ''}`}>{batchSelected.includes(t.id) ? '☑' : '☐'}</span>}
                   </button>
                 ))}
               </div>
@@ -807,8 +1054,87 @@ const addToast = (message, type = 'info') => {
               <button onClick={() => setShowTemplates(true)} className="settings-toggle">
                 TEMPLATES
               </button>
+              {/* Batch Mode Toggle */}
+              <button 
+                onClick={() => setBatchMode(!batchMode)} 
+                className={`settings-toggle ${batchMode ? 'batch-active' : ''}`}
+              >
+                BATCH {batchMode ? 'ON' : 'OFF'}
+              </button>
+              {/* Run Batch Button */}
+              {batchMode && (
+                <button 
+                  onClick={executeBatch} 
+                  disabled={batchSelected.length === 0 || batchRunning || !target} 
+                  className="batch-run-btn"
+                >
+                  {batchRunning ? `BATCHING ${batchProgress}%` : `RUN BATCH (${batchSelected.length})`}
+                </button>
+              )}
+              {/* Run Chain Button */}
+              <button 
+                onClick={executeChain} 
+                disabled={chainTools.length === 0 || chainRunning || !target} 
+                className="strike-btn chain-btn"
+              >
+                {chainRunning ? 'CHAINING...' : `RUN CHAIN${chainTools.length > 0 ? ` (${chainTools.length})` : ''}`}
+              </button>
             </div>
           </div>
+          {/* Batch Progress Bar */}
+          {batchMode && batchRunning && (
+            <div className="batch-progress-bar">
+              <div className="batch-progress-fill" style={{width: `${batchProgress}%`}} />
+              <span className="batch-progress-text">{batchCurrentTool} — {batchProgress}%</span>
+            </div>
+          )}
+          {/* Chain Status Bar */}
+          {chainTools.length > 0 && (
+            <div className="chain-status-bar">
+              <span className="chain-status-label">CHAIN:</span>
+              {chainTools.map((id, i) => {
+                const t = toolRegistry.find(t => t.id === id);
+                const result = chainResults[i];
+                const statusColor = result?.status === 'SUCCESS' ? '#00ff41' : result?.status === 'FAILED' ? '#ff0000' : '#666';
+                return (
+                  <React.Fragment key={id}>
+                    {i > 0 && <span className="chain-arrow">→</span>}
+                    <span 
+                      className="chain-step" 
+                      style={{color: i < chainStep ? statusColor : '#888', borderColor: i === chainStep - 1 ? '#fbbf24' : '#333'}}
+                      onClick={() => removeFromChain(i)}
+                      title="Click to remove"
+                    >
+                      {t?.name || id}
+                      {result && <span className="chain-step-status" style={{color: statusColor}}> {result.status === 'SUCCESS' ? '✓' : '✗'}</span>}
+                    </span>
+                  </React.Fragment>
+                );
+              })}
+              <button onClick={clearChain} className="settings-toggle" style={{fontSize:'0.5rem',padding:'2px 6px',marginLeft:'8px'}}>CLEAR</button>
+            </div>
+          )}
+          {/* Chain Builder */}
+          {batchMode && (
+            <div className="chain-builder">
+              <input
+                className="chain-builder-input"
+                placeholder="Add tool to chain..."
+                value={chainInput}
+                onChange={(e) => setChainInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && chainInput.trim()) { addToChain(chainInput.trim().toLowerCase()); setChainInput(''); } }}
+                aria-label="Add tool to chain"
+              />
+              <button 
+                onClick={() => { if (chainInput.trim()) { addToChain(chainInput.trim().toLowerCase()); setChainInput(''); } }}
+                className="chain-builder-add"
+                disabled={!chainInput.trim()}
+              >
+                ADD TO CHAIN
+              </button>
+              <span className="chain-builder-hint">Type tool ID or name, press Enter</span>
+            </div>
+          )}
           <div className="header-metrics">
             <div className="metric">TOOL: <span className="highlight">{currentTool.name}</span></div>
             <div className="metric">SENSITIVITY: <span className="highlight">HIGH</span></div>
@@ -1000,15 +1326,22 @@ const addToast = (message, type = 'info') => {
         {/* Threat Intel Panel */}
         <ThreatIntelPanel />
         <div style={{padding:'10px',borderTop:'1px solid var(--dark-red)'}}>
-          <div style={{fontSize:'0.6rem',color:'var(--text-dim)',textTransform:'uppercase',marginBottom:'8px',fontFamily:'Orbitron'}}>SESSIONS</div>
-          <div style={{display:'flex',gap:'5px',marginBottom:'8px'}}>
-            <input className="target-input" placeholder="Session name..." value={sessionName} onChange={(e) => setSessionName(e.target.value)} style={{width:'100%',fontSize:'0.7rem',padding:'4px 8px'}} />
-            <button onClick={saveSession} className="settings-toggle" style={{fontSize:'0.55rem',padding:'4px 8px'}}>SAVE</button>
+          <div style={{fontSize:'0.6rem',color:'var(--blood-red)',textTransform:'uppercase',marginBottom:'8px',fontFamily:'Orbitron',letterSpacing:'1px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <span>◆ SESSIONS</span>
+            <span style={{fontSize:'0.5rem',color:'var(--text-dim)',fontWeight:'normal'}}>{Object.keys(sessions).length} saved</span>
           </div>
+          <div style={{display:'flex',gap:'5px',marginBottom:'8px'}}>
+            <input className="target-input" placeholder="Session name..." value={sessionName} onChange={(e) => setSessionName(e.target.value)} style={{width:'100%',fontSize:'0.7rem',padding:'4px 8px'}} onKeyDown={(e) => { if (e.key === 'Enter' && sessionName && target) saveSession(); }} />
+            <button onClick={saveSession} className="settings-toggle" style={{fontSize:'0.55rem',padding:'4px 8px',borderColor:'#00ff41',color:'#00ff41'}}>SAVE</button>
+          </div>
+          {Object.keys(sessions).length === 0 && (
+            <div style={{fontSize:'0.6rem',color:'#555',textAlign:'center',padding:'8px',fontStyle:'italic'}}>No saved sessions</div>
+          )}
           {Object.keys(sessions).map((name, i) => (
-            <div key={i} className="history-item" onClick={() => loadSession(name)} style={{cursor:'pointer',padding:'6px 8px',fontSize:'0.65rem'}}>
-              <span style={{color:'var(--blood-red)'}}>{name}</span>
-              <span style={{opacity:0.4,float:'right',fontSize:'0.55rem'}}>{sessions[name].target}</span>
+            <div key={i} className="history-item session-item" style={{cursor:'pointer',padding:'6px 8px',fontSize:'0.65rem',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'6px'}}>
+              <span style={{color:'var(--blood-red)',flex:'1',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}} onClick={() => loadSession(name)} title={`Load session: ${name}`}>{name}</span>
+              <span style={{opacity:0.4,fontSize:'0.55rem',flexShrink:0}}>{sessions[name].target}</span>
+              <button onClick={(e) => { e.stopPropagation(); deleteSession(name); }} style={{background:'transparent',border:'1px solid #333',color:'#666',fontSize:'0.5rem',padding:'1px 4px',cursor:'pointer',fontFamily:'Orbitron',flexShrink:0}} title={`Delete session: ${name}`}>DEL</button>
             </div>
           ))}
         </div>
@@ -1026,8 +1359,27 @@ const addToast = (message, type = 'info') => {
               onChange={(e) => setCmdInput(e.target.value)}
               onKeyDown={handleCmdKeyDown}
             />
-            <div className="palette-hint">↑↓ Navigate · Enter Execute · Esc Close · Ctrl+K Toggle</div>
+            <div className="palette-hint">↑↓ Navigate · Enter Execute · Esc Close · Ctrl+K Toggle · Tab Complete</div>
           </form>
+          {showAutoComplete && (
+            <div className="autocomplete-dropdown">
+              {autoCompleteResults.map((item, i) => (
+                <div
+                  key={item.id}
+                  className={`autocomplete-item ${i === autoCompleteIndex ? 'autocomplete-item-active' : ''}`}
+                  onClick={() => {
+                    setCmdInput(item.id);
+                    setShowAutoComplete(false);
+                    setAutoCompleteResults([]);
+                  }}
+                >
+                  <span className="autocomplete-type">⚙</span>
+                  <span className="autocomplete-label">{item.id}</span>
+                  <span className="autocomplete-name">{item.name}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="palette-results">
             {cmdResults.length === 0 && (
               <div className="palette-empty">No matches found</div>
@@ -1054,6 +1406,24 @@ const addToast = (message, type = 'info') => {
         </div>
       )}
 
+      {showHelp && (
+        <div className="help-overlay" onClick={() => setShowHelp(false)}>
+          <div className="help-modal" onClick={e => e.stopPropagation()}>
+            <div className="help-header">KEYBOARD_SHORTCUTS</div>
+            <div className="help-body">
+              <div className="help-row"><span className="help-key">Ctrl+K</span><span className="help-desc">Command palette</span></div>
+              <div className="help-row"><span className="help-key">Ctrl+F</span><span className="help-desc">Toggle fullscreen</span></div>
+              <div className="help-row"><span className="help-key">Ctrl+S</span><span className="help-desc">Save session</span></div>
+              <div className="help-row"><span className="help-key">Ctrl+/</span><span className="help-desc">This help</span></div>
+              <div className="help-row"><span className="help-key">Tab</span><span className="help-desc">Auto-complete tool name</span></div>
+              <div className="help-row"><span className="help-key">↑↓</span><span className="help-desc">Navigate palette</span></div>
+              <div className="help-row"><span className="help-key">Enter</span><span className="help-desc">Execute selected</span></div>
+              <div className="help-row"><span className="help-key">Esc</span><span className="help-desc">Close modal</span></div>
+            </div>
+            <button className="save-btn" onClick={() => setShowHelp(false)}>CLOSE</button>
+          </div>
+        </div>
+      )}
       {showSettings && (
         <div className="settings-overlay" onClick={() => setShowSettings(false)}>
           <div className="settings-modal" onClick={e => e.stopPropagation()}>
@@ -1069,11 +1439,19 @@ const addToast = (message, type = 'info') => {
               </div>
               <div className="setting-item">
                 <span className="s-label">CRT_FLICKER:</span>
-                <input type="checkbox" defaultChecked />
+                <input type="checkbox" checked={crtFlicker} onChange={() => setCrtFlicker(!crtFlicker)} />
               </div>
               <div className="setting-item">
                 <span className="s-label">MATRIX_RAIN:</span>
                 <input type="checkbox" checked={matrixRain} onChange={() => setMatrixRain(!matrixRain)} />
+              </div>
+              <div className="setting-item">
+                <span className="s-label">MATRIX_DENSITY:</span>
+                <select className="settings-toggle" value={density} onChange={(e) => setDensity(e.target.value)} style={{fontSize:'0.55rem',padding:'2px 4px'}}>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
               </div>
               <div className="setting-item">
                 <span className="s-label">SCANLINES:</span>
@@ -1187,7 +1565,7 @@ const addToast = (message, type = 'info') => {
   );
 };
 
-const CanvasRain = () => {
+const CanvasRain = ({ density = 'medium' }) => {
   const canvasRef = useRef(null);
   
   useEffect(() => {
@@ -1199,8 +1577,14 @@ const CanvasRain = () => {
     
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
     const fontSize = 14;
+    const columnSkip = density === 'low' ? 3 : density === 'high' ? 1 : 2;
     const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(1);
+    const activeColumns = [];
+    for (let i = 0; i < columns; i += columnSkip) {
+      activeColumns.push(i);
+    }
+    const drops = {};
+    activeColumns.forEach(i => { drops[i] = 1; });
     
     let animationId;
     
@@ -1211,7 +1595,7 @@ const CanvasRain = () => {
       ctx.fillStyle = '#00ff41';
       ctx.font = `${fontSize}px monospace`;
       
-      for (let i = 0; i < drops.length; i++) {
+      activeColumns.forEach(i => {
         const text = chars.charAt(Math.floor(Math.random() * chars.length));
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
         
@@ -1219,7 +1603,7 @@ const CanvasRain = () => {
           drops[i] = 0;
         }
         drops[i]++;
-      }
+      });
       
       animationId = requestAnimationFrame(draw);
     };
@@ -1227,7 +1611,7 @@ const CanvasRain = () => {
     draw();
     
     return () => cancelAnimationFrame(animationId);
-  }, []);
+  }, [density]);
   
   return <canvas ref={canvasRef} className="matrix-rain" style={{ opacity: 0.15 }} />;
 };
