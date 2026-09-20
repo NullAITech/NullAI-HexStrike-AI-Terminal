@@ -2,25 +2,67 @@
   {
     "id": "full-recon",
     "name": "Full Reconnaissance",
-    "description": " Comprehensive surface mapping: Nmap -> WhatWeb -> Nikto -> Gobuster",
-    "tools": ["nmap", "whatweb", "nikto", "gobuster"]
+    "description": "Comprehensive surface mapping: Nmap -> WhatWeb -> Nikto -> Gobuster",
+    "tools": ["nmap", "whatweb", "nikto", "gobuster"],
+    "difficulty": "intermediate",
+    "usefulness": 8,
+    "tags": ["recon", "pipeline", "web"],
+    "isCustom": false,
+    "category_order": 0
   },
   {
     "id": "web-vuln",
     "name": "Web Vulnerability Scan",
-    "description": " Targeted web attack: WhatWeb -> Nikto -> Sqlmap -> Wapiti",
-    "tools": ["whatweb", "nikto", "sqlmap", "wapiti"]
+    "description": "Targeted web attack: WhatWeb -> Nikto -> Sqlmap -> Wapiti",
+    "tools": ["whatweb", "nikto", "sqlmap", "wapiti"],
+    "difficulty": "advanced",
+    "usefulness": 9,
+    "tags": ["web", "pentest", "exploit"],
+    "isCustom": false,
+    "category_order": 0
   },
   {
     "id": "neural-probe",
     "name": "Neural Surface Probe",
-    "description": " AI-focused scan: WhatWeb -> Garak -> Vigil -> LLMFuzzer",
-    "tools": ["whatweb", "garak", "vigil", "llmfuzzer"]
+    "description": "AI-focused scan: WhatWeb -> Garak -> Vigil -> LLMFuzzer",
+    "tools": ["whatweb", "garak", "vigil", "llmfuzzer"],
+    "difficulty": "advanced",
+    "usefulness": 7,
+    "tags": ["neural", "ai", "red-team"],
+    "isCustom": false,
+    "category_order": 0
   },
   {
     "id": "cred-blast",
     "name": "Credential Blast",
-    "description": " Aggressive credential testing: Nmap -> Hydra -> John",
-    "tools": ["nmap", "hydra", "john"]
+    "description": "Aggressive credential testing: Nmap -> Hydra -> John",
+    "tools": ["nmap", "hydra", "john"],
+    "difficulty": "advanced",
+    "usefulness": 9,
+    "tags": ["password", "brute-force", "exploit"],
+    "isCustom": false,
+    "category_order": 0
+  },
+  {
+    "id": "quick-scan",
+    "name": "Quick Scan",
+    "description": "Fast top-ports and service detection",
+    "tools": ["masscan", "httpx"],
+    "difficulty": "beginner",
+    "usefulness": 7,
+    "tags": ["recon", "fast", "network"],
+    "isCustom": false,
+    "category_order": 0
+  },
+  {
+    "id": "ad-assault",
+    "name": "AD Assault",
+    "description": "Active Directory enumeration and exploitation chain",
+    "tools": ["bloodhound", "impacket", "crackmapexec", "certipy"],
+    "difficulty": "advanced",
+    "usefulness": 10,
+    "tags": ["ad", "post-exploit", "pentest"],
+    "isCustom": false,
+    "category_order": 0
   }
 ]

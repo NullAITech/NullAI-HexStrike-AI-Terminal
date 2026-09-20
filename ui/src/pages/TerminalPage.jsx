@@ -63,6 +63,9 @@ const TerminalPage = () => {
   const [batchCurrentTool, setBatchCurrentTool] = useState('');
   const [batchQueue, setBatchQueue] = useState([]);
   const [batchRunning, setBatchRunning] = useState(false);
+  // Execution history log — timestamped record of all tool executions
+  const [executionHistory, setExecutionHistory] = useState([]);
+  const [execStartTime, setExecStartTime] = useState(null);
   // Tool chaining
   const [chainTools, setChainTools] = useState([]);
   const [chainInput, setChainInput] = useState('');
@@ -78,12 +81,32 @@ const TerminalPage = () => {
   const [showAutoComplete, setShowAutoComplete] = useState(false);
   const [autoCompleteResults, setAutoCompleteResults] = useState([]);
   const [autoCompleteIndex, setAutoCompleteIndex] = useState(0);
+  // Tool comparison
+  const [showCompare, setShowCompare] = useState(false);
+  const [compareToolA, setCompareToolA] = useState('');
+  const [compareToolB, setCompareToolB] = useState('');
+  // Terminal input history
+  const [terminalInput, setTerminalInput] = useState('');
+  const [terminalHistory, setTerminalHistory] = useState([]);
+  const [terminalHistoryIdx, setTerminalHistoryIdx] = useState(-1);
+  // Custom playbooks
+  const [customPlaybooks, setCustomPlaybooks] = useState([]);
+  const [showPlaybookModal, setShowPlaybookModal] = useState(false);
+  const [playbookForm, setPlaybookForm] = useState({ name: '', description: '', tools: [], tags: '' });
+  // Advanced search/filter chips
+  const [filterChips, setFilterChips] = useState({ difficulty: [], usefulness: [], tags: [] });
+  const [showTagDropdown, setShowTagDropdown] = useState(false);
 
   // Load favorites from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem('hexstrike-favorites');
       if (saved) setFavorites(JSON.parse(saved));
+    } catch {}
+    // Load custom playbooks from localStorage
+    try {
+      const savedPlaybooks = localStorage.getItem('hexstrike-playbooks');
+      if (savedPlaybooks) setCustomPlaybooks(JSON.parse(savedPlaybooks));
     } catch {}
   }, []);
 
@@ -97,12 +120,51 @@ const TerminalPage = () => {
 
   const isFavorited = (toolId) => favorites.includes(toolId);
 
-  // Filtered tools by search
-  const filteredTools = toolRegistry.filter(t =>
-    t.name.toLowerCase().includes(toolSearch.toLowerCase()) ||
-    t.id.toLowerCase().includes(toolSearch.toLowerCase()) ||
-    t.tags.some(tag => tag.toLowerCase().includes(toolSearch.toLowerCase()))
-  );
+  // Star rating renderer
+  const renderStars = (rating) => {
+    const full = Math.floor(rating / 2);
+    const half = rating % 2 >= 1;
+    return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(5 - full - (half ? 1 : 0));
+  };
+
+  // Filter chip toggles
+  const toggleDifficulty = (d) => {
+    setFilterChips(prev => ({
+      ...prev,
+      difficulty: prev.difficulty.includes(d) ? prev.difficulty.filter(x => x !== d) : [...prev.difficulty, d]
+    }));
+  };
+  const toggleUsefulness = (u) => {
+    setFilterChips(prev => ({
+      ...prev,
+      usefulness: prev.usefulness.includes(u) ? prev.usefulness.filter(x => x !== u) : [...prev.usefulness, u]
+    }));
+  };
+  const toggleTag = (tag) => {
+    setFilterChips(prev => ({
+      ...prev,
+      tags: prev.tags.includes(tag) ? prev.tags.filter(x => x !== tag) : [...prev.tags, tag]
+    }));
+  };
+  const clearFilters = () => setFilterChips({ difficulty: [], usefulness: [], tags: [] });
+
+  // All available tags across tools
+  const allTags = [...new Set(toolRegistry.flatMap(t => t.tags))].sort();
+
+  // Filtered tools with search + chip filters
+  const filteredTools = toolRegistry.filter(t => {
+    const matchesSearch = t.name.toLowerCase().includes(toolSearch.toLowerCase()) ||
+      t.id.toLowerCase().includes(toolSearch.toLowerCase()) ||
+      t.tags.some(tag => tag.toLowerCase().includes(toolSearch.toLowerCase()));
+    if (!matchesSearch) return false;
+    if (filterChips.difficulty.length > 0 && !filterChips.difficulty.includes(t.difficulty)) return false;
+    if (filterChips.usefulness.length > 0) {
+      const min = Math.min(...filterChips.usefulness);
+      if (t.usefulness < min) return false;
+    }
+    if (filterChips.tags.length > 0 && !filterChips.tags.some(tag => t.tags.includes(tag))) return false;
+    return true;
+  });
 
   // Favorited tools sorted first
   const favoritedTools = filteredTools.filter(t => favorites.includes(t.id));
@@ -207,12 +269,14 @@ const TerminalPage = () => {
       const recent = cmdHistory.slice(0, 8).map(c => ({ type: 'recent', label: c, id: c }));
       const tools = toolRegistry.map(t => ({ type: 'tool', label: `${t.id} — ${t.name}`, id: t.id }));
       const playbooks = playbookRegistry.map(p => ({ type: 'playbook', label: `${p.id} — ${p.name}`, id: p.id }));
-      setCmdResults([...recent, ...tools, ...playbooks]);
+      const custom = customPlaybooks.map(p => ({ type: 'playbook', label: `${p.id} — ${p.name}`, id: p.id }));
+      setCmdResults([...recent, ...tools, ...playbooks, ...custom]);
       setShowRecentOnly(true);
     } else {
       const matched = [
         ...toolRegistry.filter(t => t.id.toLowerCase().includes(q) || t.name.toLowerCase().includes(q)).map(t => ({ type: 'tool', label: `${t.id} — ${t.name}`, id: t.id })),
         ...playbookRegistry.filter(p => p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q)).map(p => ({ type: 'playbook', label: `${p.id} — ${p.name}`, id: p.id })),
+        ...customPlaybooks.filter(p => p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q)).map(p => ({ type: 'playbook', label: `${p.id} — ${p.name}`, id: p.id })),
         ...cmdHistory.filter(c => c.toLowerCase().includes(q)).slice(0, 5).map(c => ({ type: 'recent', label: c, id: c })),
       ];
       setCmdResults(matched);
@@ -371,6 +435,8 @@ const executeBatch = async () => {
     if (batchSelected.length === 0 || !target || batchRunning) return;
     setBatchRunning(true);
     setBatchProgress(0);
+    const batchStartTime = Date.now();
+    setExecStartTime(batchStartTime);
     setToolLogs(prev => [...prev, `\n[SYSTEM] > BATCH MODE: Running ${batchSelected.length} tools on ${target}...`]);
     setAiLogs(prev => [...prev, '\n[SYSTEM] > BATCH SEQUENCE INITIATED...']);
     setShowLiveOutput(true);
@@ -417,6 +483,16 @@ const executeBatch = async () => {
     setBatchCurrentTool('');
     setScanProgress(100);
     addToast(`Batch complete: ${results.filter(r => r.status === 'SUCCESS').length}/${results.length} succeeded`, 'success');
+    const batchDuration = execStartTime ? Date.now() - execStartTime : 0;
+    setExecutionHistory(prev => [{
+      id: Date.now(),
+      timestamp: new Date().toLocaleString(),
+      target,
+      tool: 'BATCH',
+      status: 'SUCCESS',
+      duration: `${Math.round(batchDuration / 1000)}s`
+    }, ...prev].slice(0, 50));
+    setExecStartTime(null);
     setHistory(prev => [{ timestamp: new Date().toLocaleTimeString(), target, tool: 'BATCH', status: 'SUCCESS' }, ...prev].slice(0, 10));
   };
 
@@ -445,6 +521,8 @@ const executeBatch = async () => {
     if (chainTools.length === 0 || !target || chainRunning) return;
     setChainRunning(true);
     setChainStep(0);
+    const chainStartTime = Date.now();
+    setExecStartTime(chainStartTime);
     setToolLogs(prev => [...prev, `\n[CHAIN] > Starting attack chain: ${chainTools.map(id => toolRegistry.find(t=>t.id===id)?.name || id).join(' → ')}`]);
     setAiLogs(prev => [...prev, '\n[CHAIN] > Sequential exploitation pipeline initialized...']);
     setShowLiveOutput(true);
@@ -499,6 +577,16 @@ const executeBatch = async () => {
     setScanProgress(100);
     const successCount = results.filter(r => r.status === 'SUCCESS').length;
     addToast(`Chain complete: ${successCount}/${chainTools.length} steps succeeded`, successCount === chainTools.length ? 'success' : 'error');
+    const chainDuration = execStartTime ? Date.now() - execStartTime : 0;
+    setExecutionHistory(prev => [{
+      id: Date.now(),
+      timestamp: new Date().toLocaleString(),
+      target,
+      tool: 'CHAIN',
+      status: successCount === chainTools.length ? 'SUCCESS' : 'PARTIAL',
+      duration: `${Math.round(chainDuration / 1000)}s`
+    }, ...prev].slice(0, 50));
+    setExecStartTime(null);
   };
 
   const addToast = (message, type = 'info') => {
@@ -516,7 +604,9 @@ const executeBatch = async () => {
     setShowLiveOutput(true);
 
     const timestamp = new Date().toLocaleTimeString();
-    const toolName = playbookRegistry.find(p => p.id === toolId)?.name || toolRegistry.find(t => t.id === toolId)?.name || toolId;
+    const startTime = Date.now();
+    setExecStartTime(startTime);
+    const toolName = playbookRegistry.find(p => p.id === toolId)?.name || customPlaybooks.find(p => p.id === toolId)?.name || toolRegistry.find(t => t.id === toolId)?.name || toolId;
     addToast(`Strike started: ${toolName}`, 'info');
     setToolLogs(prev => [...prev, `\n[${timestamp}] > ESTABLISHING STREAM FOR ${toolId.toUpperCase()} ON ${target}...`]);
     setAiLogs(prev => [...prev, `\n[${timestamp}] > NEURAL CORE SYNCING...`]);
@@ -530,7 +620,7 @@ const executeBatch = async () => {
     }, 400);
 
     try {
-      const playbook = playbookRegistry.find(p => p.id === toolId);
+      const playbook = playbookRegistry.find(p => p.id === toolId) || customPlaybooks.find(p => p.id === toolId);
       const payload = playbook ? playbook.tools : toolId;
 
       const eventSource = new EventSource(`http://localhost:8000/execute-stream?tool=${payload}&target=${target}`);
@@ -554,6 +644,16 @@ const executeBatch = async () => {
             setScanProgress(100);
             eventSource.close();
             setExecuting(false);
+            const duration = execStartTime ? Date.now() - execStartTime : 0;
+            setExecutionHistory(prev => [{
+              id: Date.now(),
+              timestamp: new Date().toLocaleString(),
+              target,
+              tool: playbook ? playbook.name : toolId,
+              status: 'SUCCESS',
+              duration: `${Math.round(duration / 1000)}s`
+            }, ...prev].slice(0, 50));
+            setExecStartTime(null);
             setHistory(prev => [{
               timestamp,
               target,
@@ -583,6 +683,41 @@ const executeBatch = async () => {
       setExecuting(false);
       addToast('Strike Failed', 'error');
     }
+  };
+
+  const exportPDF = () => {
+    if (!target) return;
+    const reportContent = toolLogs.join('\n');
+    const aiContent = aiLogs.join('\n');
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) { addToast('Popup blocked — allow popups for PDF export', 'error'); return; }
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>HexStrike Report — ${target}</title>
+        <style>
+          body { font-family: 'Courier New', monospace; font-size: 11px; color: #00ff41; background: #0a0a0a; padding: 20px; line-height: 1.5; }
+          h1 { color: #ff0000; font-size: 18px; border-bottom: 1px solid #ff0000; padding-bottom: 8px; }
+          h2 { color: #bc13fe; font-size: 14px; margin-top: 20px; }
+          .meta { color: #fbbf24; font-size: 10px; margin-bottom: 15px; }
+          .log-line { white-space: pre-wrap; word-break: break-all; margin-bottom: 2px; }
+          .ai-line { color: #ffaaaa; border-left: 2px solid #ff0000; padding-left: 10px; margin-left: 10px; }
+          .section { margin-bottom: 20px; }
+          @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+        </style>
+      </head>
+      <body>
+        <h1>◆ HexStrike Report</h1>
+        <div class="meta">Target: ${target} | Generated: ${new Date().toLocaleString()} | Status: ${executionHistory[0]?.status || 'IN_PROGRESS'}</div>
+        <div class="section"><h2>■ RAW OUTPUT</h2>${reportContent.split('\n').map(l => `<div class="log-line">${l.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`).join('')}</div>
+        <div class="section"><h2>■ AI ANALYSIS</h2>${aiContent.split('\n').map(l => `<div class="log-line ai-line">${l.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`).join('')}</div>
+        <div class="section"><h2>■ EXECUTION HISTORY</h2>${executionHistory.map(h => `<div class="log-line">[${h.timestamp}] ${h.tool} on ${h.target} — ${h.status} (${h.duration})</div>`).join('')}</div>
+      </body>
+      </html>`);
+    printWindow.document.close();
+    setTimeout(() => { printWindow.print(); }, 300);
+    addToast('PDF report sent to printer — save as PDF from dialog', 'success');
   };
 
   const exportReport = async () => {
@@ -780,9 +915,49 @@ const executeBatch = async () => {
     } catch { addToast('Delete failed', 'error'); }
   };
 
+  const closeAllDrawers = () => {
+    document.querySelector('.hex-sidebar')?.classList.remove('open');
+    document.querySelector('.hex-intel')?.classList.remove('open');
+    document.querySelector('.exec-history-panel')?.classList.remove('open');
+  };
+
   const insertTemplate = (cmd) => {
     setCmdInput(cmd);
     setShowTemplates(false);
+  };
+
+  // Custom Playbook CRUD
+  const saveCustomPlaybook = () => {
+    if (!playbookForm.name || playbookForm.tools.length === 0) return;
+    const pb = {
+      id: 'pb-' + Date.now(),
+      name: playbookForm.name,
+      description: playbookForm.description,
+      tools: [...playbookForm.tools],
+      difficulty: 'intermediate',
+      usefulness: 7,
+      tags: playbookForm.tags.split(',').map(t => t.trim()).filter(Boolean),
+      isCustom: true,
+      category_order: 0
+    };
+    const next = [...customPlaybooks, pb];
+    setCustomPlaybooks(next);
+    try { localStorage.setItem('hexstrike-playbooks', JSON.stringify(next)); } catch {}
+    setPlaybookForm({ name: '', description: '', tools: [], tags: '' });
+    setShowPlaybookModal(false);
+    addToast('Playbook saved', 'success');
+  };
+  const deleteCustomPlaybook = (id) => {
+    const next = customPlaybooks.filter(p => p.id !== id);
+    setCustomPlaybooks(next);
+    try { localStorage.setItem('hexstrike-playbooks', JSON.stringify(next)); } catch {}
+    addToast('Playbook deleted', 'info');
+  };
+  const toggleToolInForm = (toolId) => {
+    setPlaybookForm(prev => ({
+      ...prev,
+      tools: prev.tools.includes(toolId) ? prev.tools.filter(id => id !== toolId) : [...prev.tools, toolId]
+    }));
   };
 
   // Attack Chain component
@@ -871,7 +1046,7 @@ const executeBatch = async () => {
   };
 
   return (
-    <div className={`hex-studio ${stealthMode ? 'stealth-mode' : ''}`}>
+    <div className={`hex-studio ${stealthMode ? 'stealth-mode' : ''}`} data-theme={theme}>
       {matrixRain && <CanvasRain density={density} />}
       {scanlineActive && <div className="crt-overlay" />}
       <div className={`crt-flicker ${crtFlicker ? '' : 'crt-flicker-paused'}`} />
@@ -896,6 +1071,49 @@ const executeBatch = async () => {
           {favorites.length > 0 && (
             <div className="favorites-count">★ {favorites.length}</div>
           )}
+        </div>
+
+        {/* Advanced Filter Chips */}
+        <div className="filter-chips">
+          <div className="filter-chips-header">
+            <span>FILTERS</span>
+            {(filterChips.difficulty.length + filterChips.usefulness.length + filterChips.tags.length) > 0 && (
+              <button className="clear-filters" onClick={clearFilters}>CLEAR</button>
+            )}
+          </div>
+          <div className="chip-group">
+            <span className="chip-label">DIFFICULTY</span>
+            {['beginner','intermediate','advanced'].map(d => (
+              <button
+                key={d}
+                className={`chip ${filterChips.difficulty.includes(d) ? 'chip-active' : ''} chip-${d}`}
+                onClick={() => toggleDifficulty(d)}
+              >{d}</button>
+            ))}
+          </div>
+          <div className="chip-group">
+            <span className="chip-label">USEFULNESS</span>
+            {[8,6,4].map(u => (
+              <button
+                key={u}
+                className={`chip ${filterChips.usefulness.includes(u) ? 'chip-active' : ''}`}
+                onClick={() => toggleUsefulness(u)}
+              >&gt;={u}+</button>
+            ))}
+          </div>
+          <div className="chip-group chip-group-tags">
+            <span className="chip-label" onClick={() => setShowTagDropdown(!showTagDropdown)} style={{cursor:'pointer'}}>TAGS ▲</span>
+            {showTagDropdown && (
+              <div className="tag-dropdown">
+                {allTags.map(tag => (
+                  <label key={tag} className="tag-option">
+                    <input type="checkbox" checked={filterChips.tags.includes(tag)} onChange={() => toggleTag(tag)} />
+                    {tag}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Batch Selection Toggle */}
@@ -932,6 +1150,8 @@ const executeBatch = async () => {
                     onClick={() => handleToolClick(t.id, t.category)}
                   >
                     <span className="tool-id">{t.id}</span> {t.name}
+                    <span className="tool-stars" title={`Usefulness: ${t.usefulness}/10`}>{renderStars(t.usefulness)}</span>
+                    <span className={`diff-badge diff-${t.difficulty}`}>{t.difficulty.slice(0,4)}</span>
                     <span
                       className="fav-star"
                       onClick={(e) => { e.stopPropagation(); toggleFavorite(t.id); }}
@@ -969,10 +1189,37 @@ const executeBatch = async () => {
                   }}
                 >
                   <span className="tool-id">{p.id}</span> {p.name}
+                  <span className="tool-stars" title={`Usefulness: ${p.usefulness}/10`}>{renderStars(p.usefulness)}</span>
+                  <span className={`diff-badge diff-${p.difficulty}`}>{p.difficulty.slice(0,4)}</span>
                   {batchMode && <span className={`batch-select-indicator ${batchSelected.includes(p.id) ? 'selected' : ''}`}>{batchSelected.includes(p.id) ? '☑' : '☐'}</span>}
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Custom Playbooks */}
+          <div className="cat-group">
+            <div className="cat-label" onClick={() => setShowPlaybookModal(true)} style={{cursor:'pointer'}}>
+              + Create Playbook
+            </div>
+            {customPlaybooks.map(pb => (
+              <div key={pb.id} className="tool-list open">
+                <button
+                  className={`tool-btn ${selectedToolId === pb.id ? 'active' : ''}`}
+                  onClick={() => { handleToolClick(pb.id, 'playbooks'); setShowPlaybookModal(false); }}
+                >
+                  <span className="tool-id">{pb.id}</span> {pb.name}
+                  <span className="tool-stars" title={`Usefulness: ${pb.usefulness}/10`}>{renderStars(pb.usefulness)}</span>
+                  <span className={`diff-badge diff-${pb.difficulty}`}>{pb.difficulty.slice(0,4)}</span>
+                  <span
+                    className="fav-star"
+                    onClick={(e) => { e.stopPropagation(); deleteCustomPlaybook(pb.id); }}
+                    title="Delete playbook"
+                    style={{color:'#ff0000'}}
+                  >✕</span>
+                </button>
+              </div>
+            ))}
           </div>
 
           {[...new Set(filteredTools.map(t => t.category))].map(cat => (
@@ -991,6 +1238,8 @@ const executeBatch = async () => {
                     onClick={() => handleToolClick(t.id, t.category)}
                   >
                     <span className="tool-id">{t.id}</span> {t.name}
+                    <span className="tool-stars" title={`Usefulness: ${t.usefulness}/10`}>{renderStars(t.usefulness)}</span>
+                    <span className={`diff-badge diff-${t.difficulty}`}>{t.difficulty.slice(0,4)}</span>
                     <span
                       className={`fav-star ${isFavorited(t.id) ? 'favorited' : ''}`}
                       onClick={(e) => { e.stopPropagation(); toggleFavorite(t.id); }}
@@ -1017,12 +1266,41 @@ const executeBatch = async () => {
         </div>
       </aside>
 
+      {/* Execution History Panel */}
+      <div className="exec-history-panel" id="exec-history-panel">
+        <div className="exec-history-header">
+          <span>EXECUTION LOG</span>
+          <button className="settings-toggle" onClick={() => document.getElementById('exec-history-panel')?.classList.remove('open')} style={{fontSize:'0.5rem',padding:'2px 6px'}}>✕</button>
+        </div>
+        <div className="exec-history-body">
+          {executionHistory.length === 0 && <div className="empty-state">No executions yet.</div>}
+          {executionHistory.map(h => (
+            <div key={h.id} className="history-item exec-history-item">
+              <div className="h-meta">{h.timestamp}</div>
+              <div className="h-tool">{h.tool} → {h.target}</div>
+              <div className="h-status" style={{color: h.status === 'SUCCESS' ? '#00ff41' : h.status === 'FAILED' ? '#ff0000' : '#fbbf24'}}>
+                {h.status} ({h.duration})
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Drawer overlay for mobile */}
+      <div className="drawer-overlay" id="drawer-overlay" onClick={closeAllDrawers} />
+
       <main className="hex-workspace">
         <header className="workspace-header">
           <div className="target-bar">
             <button 
               className="settings-toggle mobile-menu-btn" 
-              onClick={() => document.querySelector('.hex-sidebar')?.classList.toggle('open')}
+              onClick={() => {
+                const sidebar = document.querySelector('.hex-sidebar');
+                sidebar?.classList.toggle('open');
+                // Close intel panel if open
+                document.querySelector('.hex-intel')?.classList.remove('open');
+                document.querySelector('.exec-history-panel')?.classList.remove('open');
+              }}
               aria-label="Toggle navigation menu"
             >☰</button>
             <span className="label">TARGET_VECTOR:</span>
@@ -1078,6 +1356,22 @@ const executeBatch = async () => {
                 className="strike-btn chain-btn"
               >
                 {chainRunning ? 'CHAINING...' : `RUN CHAIN${chainTools.length > 0 ? ` (${chainTools.length})` : ''}`}
+              </button>
+              {/* Theme Toggle */}
+              <button 
+                onClick={() => setTheme(prev => prev === 'void-red' ? 'light' : 'void-red')} 
+                className="theme-toggle-btn"
+                title="Toggle Dark/Light Theme"
+              >
+                {theme === 'void-red' ? '☀ LIGHT' : '☾ DARK'}
+              </button>
+              {/* Tool Compare */}
+              <button 
+                onClick={() => setShowCompare(true)} 
+                className="compare-btn"
+                title="Compare two tools side-by-side"
+              >
+                ⚖ COMPARE
               </button>
             </div>
           </div>
@@ -1299,6 +1593,60 @@ const executeBatch = async () => {
           <button onClick={() => setLogFilter(f => ({...f, error: !f.error}))} className="settings-toggle" style={{fontSize:'0.5rem',padding:'2px 6px',borderColor: logFilter.error ? '#ff0000' : '#333',color: logFilter.error ? '#ff0000' : '#666'}}>ERR</button>
           <button onClick={() => setLogFilter(f => ({...f, tool: !f.tool}))} className="settings-toggle" style={{fontSize:'0.5rem',padding:'2px 6px',borderColor: logFilter.tool ? '#fbbf24' : '#333',color: logFilter.tool ? '#fbbf24' : '#666'}}>TOOL</button>
           <span style={{marginLeft:'auto',fontSize:'0.55rem',color:'var(--text-dim)',fontFamily:'Orbitron'}}>PROGRESS: {scanProgress}%</span>
+        </div>
+
+        {/* Mobile Bottom Action Bar */}
+        <div className="mobile-bottom-bar">
+          <button className="bottom-bar-btn" onClick={() => executeStrike('portscan')} disabled={executing} title="Port Scan">PORT</button>
+          <button className="bottom-bar-btn strike-btn-mobile" onClick={() => executeStrike('autopilot')} disabled={executing} title="AutoPilot Strike">⚡ STRIKE</button>
+          <button className="bottom-bar-btn" onClick={exportPDF} title="Export PDF">📄 PDF</button>
+          <button className="bottom-bar-btn" onClick={exportReport} title="Export Report">📋 EXPORT</button>
+          <button className="bottom-bar-btn" onClick={() => document.getElementById('exec-history-panel')?.classList.toggle('open')} title="Execution History">📜 LOG</button>
+        </div>
+        {/* Terminal Input with Command History */}
+        <div className="terminal-input-bar">
+          <span className="terminal-input-prefix">▸</span>
+          <input
+            className="terminal-input"
+            placeholder="Type command... (↑↓ history · Enter execute · Esc clear)"
+            value={terminalInput}
+            onChange={(e) => setTerminalInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (terminalHistory.length > 0) {
+                  setTerminalHistoryIdx(prev => {
+                    const next = prev < terminalHistory.length - 1 ? prev + 1 : prev;
+                    setTerminalInput(terminalHistory[next] || '');
+                    return next;
+                  });
+                }
+              }
+              if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setTerminalHistoryIdx(prev => {
+                  const next = prev > 0 ? prev - 1 : -1;
+                  setTerminalInput(terminalHistory[next] || '');
+                  return next;
+                });
+              }
+              if (e.key === 'Enter' && terminalInput.trim()) {
+                const cmd = terminalInput.trim();
+                setTerminalHistory(prev => {
+                  const next = [cmd, ...prev.filter(c => c !== cmd)];
+                  return next.slice(0, 50);
+                });
+                setTerminalHistoryIdx(-1);
+                setTerminalInput('');
+                executeStrike(cmd);
+              }
+              if (e.key === 'Escape') {
+                setTerminalInput('');
+              }
+            }}
+            aria-label="Terminal command input"
+          />
+          <span className="terminal-input-hint">{terminalHistory.length} cmds</span>
         </div>
       </main>
 
@@ -1530,6 +1878,10 @@ const executeBatch = async () => {
                   <span className="stat-label">Difficulty</span>
                   <span className={`difficulty-badge ${currentTool.difficulty}`}>{currentTool.difficulty}</span>
                 </div>
+                <div className="modal-stat">
+                  <span className="stat-label">Rating</span>
+                  <span className="modal-stars" title={`${currentTool.usefulness}/10`}>{renderStars(currentTool.usefulness)}</span>
+                </div>
               </div>
               <div className="modal-tags">
                 {currentTool.tags.map((tag, i) => (
@@ -1550,6 +1902,175 @@ const executeBatch = async () => {
               >
                 {isFavorited(currentTool.id) ? '★ Favorited' : '☆ Add to favorites'}
               </span>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Tool Comparison Modal */}
+      {showCompare && (
+        <div className="compare-overlay" onClick={() => setShowCompare(false)}>
+          <div className="compare-modal" onClick={e => e.stopPropagation()}>
+            <div className="compare-header">
+              <h2>⚖ TOOL COMPARISON</h2>
+              <button className="compare-close" onClick={() => setShowCompare(false)}>✕</button>
+            </div>
+            <div className="compare-selectors">
+              <span className="compare-selector-label">TOOL A:</span>
+              <select className="compare-selector" value={compareToolA} onChange={e => setCompareToolA(e.target.value)}>
+                <option value="">-- Select Tool A --</option>
+                {toolRegistry.map(t => (
+                  <option key={t.id} value={t.id}>{t.id} — {t.name}</option>
+                ))}
+              </select>
+              <span className="compare-vs">VS</span>
+              <span className="compare-selector-label">TOOL B:</span>
+              <select className="compare-selector" value={compareToolB} onChange={e => setCompareToolB(e.target.value)}>
+                <option value="">-- Select Tool B --</option>
+                {toolRegistry.map(t => (
+                  <option key={t.id} value={t.id}>{t.id} — {t.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="compare-body">
+              {(!compareToolA || !compareToolB) && (
+                <div className="compare-empty">
+                  Select two tools above to compare them side-by-side.
+                </div>
+              )}
+              {compareToolA && compareToolB && (() => {
+                const toolA = toolRegistry.find(t => t.id === compareToolA);
+                const toolB = toolRegistry.find(t => t.id === compareToolB);
+                if (!toolA || !toolB) return null;
+                return (
+                  <>
+                    <div className="compare-tool-card">
+                      <div className="compare-tool-header">
+                        <span className="compare-tool-category">{toolA.category}</span>
+                        <span className="compare-tool-name">{toolA.name}</span>
+                        <span className="compare-tool-id">{toolA.id}</span>
+                      </div>
+                      <p className="compare-description">{toolA.info}</p>
+                      <div className="compare-stats">
+                        <div className="compare-stat">
+                          <span className="compare-stat-label">Usefulness</span>
+                          <div className="compare-usefulness-bar">
+                            {[1,2,3,4,5,6,7,8,9,10].map(i => (
+                              <span key={i} className={`compare-usefulness-segment ${i <= toolA.usefulness ? 'filled' : ''}`} />
+                            ))}
+                            <span className="compare-usefulness-value">{toolA.usefulness}/10</span>
+                          </div>
+                        </div>
+                        <div className="compare-stat">
+                          <span className="compare-stat-label">Difficulty</span>
+                          <span className={`compare-difficulty ${toolA.difficulty}`}>{toolA.difficulty}</span>
+                        </div>
+                        <div className="compare-tags">
+                          {toolA.tags.map((tag, i) => (
+                            <span key={i} className="compare-tag">{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                      {toolA.link && (
+                        <a href={toolA.link} target="_blank" rel="noopener noreferrer" className="compare-link">
+                          🔗 {toolA.link}
+                        </a>
+                      )}
+                    </div>
+                    <div className="compare-tool-card">
+                      <div className="compare-tool-header">
+                        <span className="compare-tool-category">{toolB.category}</span>
+                        <span className="compare-tool-name">{toolB.name}</span>
+                        <span className="compare-tool-id">{toolB.id}</span>
+                      </div>
+                      <p className="compare-description">{toolB.info}</p>
+                      <div className="compare-stats">
+                        <div className="compare-stat">
+                          <span className="compare-stat-label">Usefulness</span>
+                          <div className="compare-usefulness-bar">
+                            {[1,2,3,4,5,6,7,8,9,10].map(i => (
+                              <span key={i} className={`compare-usefulness-segment ${i <= toolB.usefulness ? 'filled' : ''}`} />
+                            ))}
+                            <span className="compare-usefulness-value">{toolB.usefulness}/10</span>
+                          </div>
+                        </div>
+                        <div className="compare-stat">
+                          <span className="compare-stat-label">Difficulty</span>
+                          <span className={`compare-difficulty ${toolB.difficulty}`}>{toolB.difficulty}</span>
+                        </div>
+                        <div className="compare-tags">
+                          {toolB.tags.map((tag, i) => (
+                            <span key={i} className="compare-tag">{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                      {toolB.link && (
+                        <a href={toolB.link} target="_blank" rel="noopener noreferrer" className="compare-link">
+                          🔗 {toolB.link}
+                        </a>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Create Playbook Modal */}
+      {showPlaybookModal && (
+        <div className="modal-overlay" onClick={() => setShowPlaybookModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{width:'600px'}}>
+            <div className="modal-header">
+              <h2 className="modal-title">CREATE PLAYBOOK</h2>
+              <button className="modal-close" onClick={() => setShowPlaybookModal(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-info">
+                <span className="modal-category">CUSTOM</span>
+              </div>
+              <input
+                className="target-input"
+                placeholder="Playbook name..."
+                value={playbookForm.name}
+                onChange={(e) => setPlaybookForm(prev => ({...prev, name: e.target.value}))}
+                style={{width:'100%',marginBottom:'8px'}}
+              />
+              <input
+                className="target-input"
+                placeholder="Description..."
+                value={playbookForm.description}
+                onChange={(e) => setPlaybookForm(prev => ({...prev, description: e.target.value}))}
+                style={{width:'100%',marginBottom:'8px'}}
+              />
+              <input
+                className="target-input"
+                placeholder="Tags (comma-separated)..."
+                value={playbookForm.tags}
+                onChange={(e) => setPlaybookForm(prev => ({...prev, tags: e.target.value}))}
+                style={{width:'100%',marginBottom:'8px'}}
+              />
+              <div style={{maxHeight:'200px',overflowY:'auto',border:'1px solid var(--dark-red)',padding:'8px',marginBottom:'8px'}}>
+                {toolRegistry.map(t => (
+                  <label key={t.id} style={{display:'flex',alignItems:'center',gap:'8px',padding:'4px 0',cursor:'pointer',fontSize:'0.75rem'}}>
+                    <input
+                      type="checkbox"
+                      checked={playbookForm.tools.includes(t.id)}
+                      onChange={() => toggleToolInForm(t.id)}
+                    />
+                    <span className="tool-id">{t.id}</span> {t.name}
+                    <span className="tool-stars">{renderStars(t.usefulness)}</span>
+                    <span className={`diff-badge diff-${t.difficulty}`}>{t.difficulty.slice(0,4)}</span>
+                  </label>
+                ))}
+              </div>
+              <div style={{fontSize:'0.65rem',color:'var(--text-dim)'}}>
+                Selected: {playbookForm.tools.length} tools
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="save-btn" onClick={saveCustomPlaybook} disabled={!playbookForm.name || playbookForm.tools.length === 0}>
+                SAVE PLAYBOOK
+              </button>
             </div>
           </div>
         </div>
