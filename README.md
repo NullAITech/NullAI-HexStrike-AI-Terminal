@@ -116,18 +116,77 @@ Each tool has: `usefulness` (1-10), `difficulty` (beginner/intermediate/advanced
 
 ---
 
-## ◈ NullAI Brand
+## ◈ Model Context Protocol (MCP) Server
 
-- **Mark**: ◈ Ghost Byte
-- **Theme**: Void-Red, Blood-Red, Obsidian
-- **Site**: https://nullai.tech
-- **License**: MIT
+HexStrike features a native **Model Context Protocol (MCP)** JSON-RPC 2.0 stdio server, allowing Claude Desktop, Cursor, Hermes Agent, OpenCode, and AGY to directly orchestrate red team operations, query the 156+ tool arsenal, generate verified commands, and conduct non-destructive socket sweeps.
+
+### Claude Desktop / Cursor Configuration
+
+Add to your `claude_desktop_config.json` or Cursor MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "hexstrike": {
+      "command": "python3",
+      "args": [
+        "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/NullAI-HexStrike-AI-Terminal/mcp_server.py"
+      ]
+    }
+  }
+}
+```
+
+### Exposed MCP Tools
+
+- `hexstrike_list_tools`: Search or filter 156+ offensive tools by category, tag, and minimum usefulness score.
+- `hexstrike_generate_cmd`: Generate canonical CLI command syntax for a tool against a target with safety guardrails.
+- `hexstrike_port_scan`: Run high-speed TCP socket sweeps against targets or local loopback (127.0.0.1).
+- `hexstrike_target_intel`: Retrieve stored target intelligence, command history, and findings.
+- `hexstrike_generate_report`: Generate sovereign markdown assessment reports.
 
 ---
 
-## ◈ Screenshots
+## ◈ Command Line Interface (CLI)
 
-> _Screenshots placeholder — add operational screenshots here_
+The `cli.py` binary provides a standalone, scriptable interface for humans and AI agents:
+
+```bash
+# List tools in the arsenal (filterable by category, tag, score)
+python3 cli.py tools --category Recon
+python3 cli.py tools --tag sqli --json
+
+# Generate offensive command syntax
+python3 cli.py cmd nmap 192.168.1.1
+python3 cli.py cmd sqlmap https://test.local --json
+
+# Run rapid loopback socket port sweep
+python3 cli.py scan 127.0.0.1 --ports 80,443,3000,8000,8788,11434
+
+# Generate comprehensive markdown assessment report
+python3 cli.py report target.internal
+
+# Run Model Context Protocol (MCP) server
+python3 cli.py mcp
+```
+
+---
+
+## ◈ Testing & Verification
+
+Run the automated test suite with pytest:
+
+```bash
+pytest tests/ -v
+```
+
+---
+
+## ◈ Sovereign Invariants
+
+- **Zero-Egress by Default**: All tool execution, target intelligence, and reporting stay strictly confined to the local host (`~/.hexstrike/`). No cloud phone-home or third-party telemetry.
+- **Enclave Confinement**: Default network reconnaissance and sockets target `127.0.0.1` and configured internal networks.
+- **Universal Interoperability**: Dual-compatible with humans (rich CLI tables & CRT web terminal) and autonomous agents (JSON-RPC 2.0 MCP & `--json` flags).
 
 ---
 
@@ -136,3 +195,4 @@ Each tool has: `usefulness` (1-10), `difficulty` (beginner/intermediate/advanced
 MIT License — see [LICENSE](LICENSE) for details.
 
 **STATUS**: `Sovereign` | **KERNEL**: `Stable` | **INTELLIGENCE**: `Active`
+
