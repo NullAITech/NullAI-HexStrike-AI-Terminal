@@ -1,12 +1,20 @@
 {
-  "name": "hexstrike-sovereign-studio",
+  "name": "nullai-hexstrike-terminal",
   "version": "1.0.0",
-  "description": "AI-driven red teaming workstation — NullAI HexStrike. Neural Intelligence Core, 40+ offensive security tools, MITRE ATT&CK mapping, real-time SSE streaming.",
-  "main": "main.py",
+  "description": "AI-driven sovereign red teaming workstation & terminal — NullAI HexStrike. Neural Intelligence Core, 156 offensive security tools, MITRE ATT&CK mapping, real-time SSE streaming.",
+  "main": "electron/main.cjs",
+  "bin": {
+    "hexstrike": "./bin/hexstrike.js",
+    "hexstrike-terminal": "./bin/hexstrike.js"
+  },
   "scripts": {
-    "dev": "cd ui && npm run dev",
-    "build": "cd ui && npm run build",
-    "preview": "cd ui && npm run preview"
+    "dev:ui": "cd ui && npm run dev",
+    "build:ui": "cd ui && npm run build",
+    "start:backend": "python3 backend/main.py",
+    "electron": "electron .",
+    "app": "npm run build:ui && electron .",
+    "dev": "npm run dev:ui",
+    "test": "pytest tests/"
   },
   "keywords": [
     "red-team",
@@ -14,12 +22,17 @@
     "ai",
     "mitre-attack",
     "pentest",
-    "nullai"
+    "nullai",
+    "electron",
+    "sovereign"
   ],
-  "author": "NullAI",
+  "author": "NullAI Tech",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal.git"
+  },
+  "devDependencies": {
+    "electron": "^34.5.8"
   }
 }

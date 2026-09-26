@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=NullAI HexStrike
+GenericName=AI Red Teaming & Offensive Security Terminal
+Comment=Sovereign AI-driven security arsenal and offensive tooling terminal
+Exec=/usr/local/bin/hexstrike desktop
+Icon=/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/NullAI-HexStrike-AI-Terminal/assets/icon.png
+Terminal=false
+Categories=Security;Development;System;Network;
+StartupNotify=true
+Actions=Terminal;Web;
+
+[Desktop Action Terminal]
+Name=Open HexStrike CLI
+Exec=x-terminal-emulator -e "/usr/local/bin/hexstrike --help"
+
+[Desktop Action Web]
+Name=Open in Browser (Port 8000)
+Exec=/usr/local/bin/hexstrike web

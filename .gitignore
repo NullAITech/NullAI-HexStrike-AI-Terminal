@@ -35,9 +35,9 @@ jspm_packages/
 .stylelintcache
 .parcel-cache
 .next
-out
-.nuxt
-dist
+# Build outputs (allow ui/dist for standalone offline execution)
+dist/
+!ui/dist/
 
 # Framework Specific (AI Models)
 # We ignore the entire framework folder to prevent 10GB+ models from being committed

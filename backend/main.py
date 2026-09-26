@@ -565,6 +565,14 @@ async def fingerprint(target: str):
         return JSONResponse({"target": target, "error": str(e), "server": "unknown", "technology": [], "security_headers": []})
 
 
+# Static UI Mount for Desktop App / Electron Mode
+from fastapi.staticfiles import StaticFiles
+ui_dist = Path(__file__).resolve().parent.parent / "ui" / "dist"
+if ui_dist.exists():
+    app.mount("/", StaticFiles(directory=str(ui_dist), html=True), name="static_ui")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+

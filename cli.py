@@ -27,7 +27,7 @@ def format_table(rows: list[list[str]], headers: list[str]) -> str:
             
     header_str = " | ".join(h.ljust(col_widths[i]) for i, h in enumerate(headers))
     sep_str = "-+-".join("-" * col_widths[i] for i in range(len(headers)))
-    row_strs = [" | ".join(str(r[i]).ljust(col_widths[i]) for i in range(len(headers))) for row in rows]
+    row_strs = [" | ".join(str(row[i]).ljust(col_widths[i]) for i in range(len(headers))) for row in rows]
     return f"{header_str}\n{sep_str}\n" + "\n".join(row_strs)
 
 
