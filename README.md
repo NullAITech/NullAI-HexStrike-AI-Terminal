@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="assets/hero-banner.svg" alt="HexStrike Security Arsenal — Sovereign Architecture Banner" width="100%" />
+</div>
+
+<br />
+
 # ◈ NullAI Security Studio
 
 **NullAI** — Sovereign red teaming workstation powered by the Ghost Byte neural core. 156+ tools, AI-driven attack chaining, real-time threat intelligence. Built on nullai.tech.
