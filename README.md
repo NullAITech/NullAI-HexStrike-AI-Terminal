@@ -4,9 +4,37 @@
 
 <br />
 
-# ◈ NullAI Security Studio
+# ◈ HexStrike Security Arsenal & Studio
 
-**NullAI** — Sovereign red teaming workstation powered by the Ghost Byte neural core. 156+ tools, AI-driven attack chaining, real-time threat intelligence. Built on nullai.tech.
+**HexStrike** — Sovereign red teaming workstation and penetration audit suite powered by the Ghost Byte neural core. 156+ tools, AI-driven attack chaining, real-time threat intelligence. 100% Free & Open Access with zero paywalls.
+
+☕ **Support Development**:
+- **Stripe Buy Us a Coffee**: [https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- **Solana Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
+
+---
+
+## ◈ ZothOS CLI Binary (`hexstrike-arsenal` / `hexstrike`)
+
+```bash
+# Check version and JSON telemetry
+hexstrike-arsenal --version
+hexstrike-arsenal --json
+
+# List tools from the 156+ security arsenal
+hexstrike-arsenal tools --json
+
+# Generate offensive syntax for a tool
+hexstrike-arsenal cmd nmap --target 127.0.0.1
+
+# Execute a rapid port sweep
+hexstrike-arsenal scan 127.0.0.1 -p 80,443,8080,8138
+
+# Start the standalone Web Workstation on port 8138
+python3 server.py
+# or
+hexstrike-arsenal serve --port 8138
+```
 
 ---
 

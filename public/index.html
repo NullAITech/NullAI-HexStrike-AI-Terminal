@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HexStrike Security Arsenal — ZothOS Sovereign Local Cockpit</title>
+  <style>
+    :root { --bg: #07080C; --card: #0F111A; --gold: #D4AF37; --emerald: #10B981; --text: #F3F4F6; --muted: #9CA3AF; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; min-height: 100vh; }
+    .bar { background: linear-gradient(90deg, rgba(16,185,129,0.14), rgba(212,175,55,0.16)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-size: 12px; }
+    .btn-gold { background: var(--gold); color: #08080B; padding: 6px 14px; border-radius: 6px; font-weight: 800; text-decoration: none; border: none; cursor: pointer; }
+    .btn-sol { background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 6px 14px; border-radius: 6px; font-weight: 800; text-decoration: none; cursor: pointer; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+    .card { background: var(--card); border: 1px solid rgba(212,175,55,0.28); border-radius: 14px; padding: 24px; margin-bottom: 20px; }
+    h1 { font-size: 1.8rem; color: #F5E6AB; margin-bottom: 8px; }
+    p { color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+    textarea { width: 100%; min-height: 130px; background: #050609; color: #34D399; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; font-family: inherit; margin-bottom: 12px; }
+    pre { background: #050609; color: #F5E6AB; padding: 16px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.2); overflow-x: auto; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <span style="color:#10B981;font-weight:800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS · ZOTHOS LOCAL DAEMON :8138</span>
+    <a class="btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee (Stripe)</a>
+    <a class="btn-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...!'">◎ Solana Tip (GG2e...dXoK)</a>
+  </div>
+  <div class="wrap">
+    <div class="card">
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <span style="background:rgba(16,185,129,0.15);color:#34D399;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:800;">ZOTHOS INSTALLED · /usr/local/bin/hexstrike-arsenal</span>
+        <span style="background:rgba(212,175,55,0.15);color:#F5E6AB;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:800;">v3.1.0 · Security & Recon</span>
+      </div>
+      <h1>HexStrike Security Arsenal</h1>
+      <p>Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+        <a class="btn-gold" href="http://127.0.0.1:3000/tools/hexstrike-arsenal">Open Zoth Studio God-Mode Workbench ↗</a>
+        <a class="btn-sol" href="https://zoth.nullai.tech/tools/hexstrike-arsenal" target="_blank" rel="noopener">Public Web Mirror ↗</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 style="font-size:1.1rem;color:#D4AF37;margin-bottom:10px;">Interactive Local Execution &amp; CLI Telemetry</h2>
+      <textarea id="inp">{
+  "tool": "hexstrike-arsenal",
+  "port": 8138,
+  "mode": "sovereign_local_enclave",
+  "zero_egress": true
+}</textarea>
+      <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <button class="btn-gold" onclick="runLocal()">Execute Local Synthesis ⚡</button>
+        <button class="btn-sol" onclick="navigator.clipboard.writeText(document.getElementById('out').textContent)">Copy Output</button>
+      </div>
+      <pre id="out">$ hexstrike-arsenal --json
+{
+  "id": "hexstrike-arsenal",
+  "name": "HexStrike Security Arsenal",
+  "status": "READY",
+  "binary": "/usr/local/bin/hexstrike-arsenal",
+  "port": 8138,
+  "license": "100% Free & Open Access"
+}</pre>
+    </div>
+  </div>
+  <script>
+    function runLocal() {
+      const v = document.getElementById("inp").value;
+      document.getElementById("out").textContent = "[ZOTHOS-ENCLAVE] Executed at " + new Date().toISOString() + "\n" + v;
+    }
+  </script>
+</body>
+</html>
