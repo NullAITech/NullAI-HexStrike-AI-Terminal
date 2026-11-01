@@ -6,7 +6,7 @@
 
 # ◈ HexStrike Security Arsenal & Studio
 
-**HexStrike** — Sovereign red teaming workstation and penetration audit suite powered by the Ghost Byte neural core. 156+ tools, AI-driven attack chaining, real-time threat intelligence. 100% Free & Open Access with zero paywalls.
+**HexStrike** — Sovereign red teaming workstation and penetration audit suite powered by the Ghost Byte neural core. 156+ Kali/Parrot security binaries, AI-driven attack chaining, real-time threat intelligence. 100% Free & Open Access with zero paywalls.
 
 ☕ **Support Development**:
 - **Stripe Buy Us a Coffee**: [https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
@@ -46,7 +46,7 @@ hexstrike-arsenal serve --port 8138
 - **Neural Autopilot** — Self-driving mode at 80% compromise threshold
 - **Target Intelligence Persistence** — Local `intel.json` profile storage across sessions
 
-### Sovereign Arsenal (156 Tools)
+### Sovereign Arsenal (156 Kali/Parrot Security Binaries)
 - **AI Red Teaming**: `garak`, `llmfuzzer`, `vigil`, `iatelligence`
 - **Network Recon**: `nmap`, `masscan`, `amass`, `subfinder`, `rustscan`
 - **Web Exploitation**: `sqlmap`, `nikto`, `gobuster`, `ffuf`, `wapiti`, `xsstrike`, `nuclei`

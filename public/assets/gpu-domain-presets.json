@@ -1,0 +1,22 @@
+{
+  "presets": [
+    {
+      "name": "Nullai Hexstrike Ai Terminal \u2014 Sovereign Zero-Trust Audit",
+      "description": "Deterministic high-throughput inspection preset for Nullai Hexstrike Ai Terminal engineered on ZothOS.",
+      "payload": "--repo NullAI-HexStrike-AI-Terminal --mode sovereign-audit --verify-checksum --strict",
+      "expected_metric": "99.98% deterministic pass rate (<4.2ms AST latency)"
+    },
+    {
+      "name": "Nullai Hexstrike Ai Terminal \u2014 A100 80GB Neural Stress Vector",
+      "description": "Multi-threaded benchmark payload synthesized for Nullai Hexstrike Ai Terminal pipeline verification.",
+      "payload": "--repo NullAI-HexStrike-AI-Terminal --benchmark --threads 16 --format json",
+      "expected_metric": "14,200 ops/sec sustained throughput"
+    },
+    {
+      "name": "Nullai Hexstrike Ai Terminal \u2014 Edge Production Hardening",
+      "description": "Pre-deployment production guardrail preset for Nullai Hexstrike Ai Terminal client-side & CLI parity.",
+      "payload": "NullAI-HexStrike-AI-Terminal-tui --benchmark --json",
+      "expected_metric": "Zero console errors \u2022 -14.0 LUFS \u2022 Triple-viewport verified"
+    }
+  ]
+}

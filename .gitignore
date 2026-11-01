@@ -63,3 +63,10 @@ __pycache__/
 *.swo
 .project
 .settings/
+.venv*/
+*.pth
+data/minds/spool.jsonl
+release-artifacts/
+build/*.iso*
+build/live_workspace/
+build/release-*/

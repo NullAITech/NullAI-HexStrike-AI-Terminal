@@ -1,0 +1,120 @@
+{
+  "repo_id": "NullAI-HexStrike-AI-Terminal",
+  "title": "Nullai Hexstrike Ai Terminal",
+  "source": "https://webdev.teknium.io/ (via Hermes uncommon-web plugin)",
+  "recommended": {
+    "slug": "canvasui-html-effects",
+    "name": "Canvas UI",
+    "subtitle": "One boarding pass, six shaders",
+    "section": "kits",
+    "framework": "react",
+    "tags": [
+      "webgl",
+      "html-in-canvas",
+      "shader"
+    ],
+    "tagline": "WebGL effects that post-process real, interactive HTML",
+    "install": "npx shadcn@latest add https://canvasui.dev/r/liquid-react.json https://canvasui.dev/r/shatter-react.json https://canvasui.dev/r/peel-react.json https://canvasui.dev/r/ripple-react.json https://canvasui.dev/r/cloth-react.json https://canvasui.dev/r/vhs-react.json",
+    "installFamily": "npx",
+    "demo_url": "https://webdev.teknium.io/d/kits3/demos/canvasui-html-effects/",
+    "meta": "MIT + Commons Clause \u00b7 vregistry (fetched 2026-10-22)",
+    "docs": "",
+    "site": "",
+    "source": "",
+    "page": "https://webdev.teknium.io/d/canvasui-html-effects/",
+    "score": 17.05,
+    "matched": [
+      "canvas",
+      "interactive",
+      "shader",
+      "ui"
+    ]
+  },
+  "picks": [
+    {
+      "slug": "canvasui-html-effects",
+      "name": "Canvas UI",
+      "subtitle": "One boarding pass, six shaders",
+      "section": "kits",
+      "framework": "react",
+      "tags": [
+        "webgl",
+        "html-in-canvas",
+        "shader"
+      ],
+      "tagline": "WebGL effects that post-process real, interactive HTML",
+      "install": "npx shadcn@latest add https://canvasui.dev/r/liquid-react.json https://canvasui.dev/r/shatter-react.json https://canvasui.dev/r/peel-react.json https://canvasui.dev/r/ripple-react.json https://canvasui.dev/r/cloth-react.json https://canvasui.dev/r/vhs-react.json",
+      "installFamily": "npx",
+      "demo_url": "https://webdev.teknium.io/d/kits3/demos/canvasui-html-effects/",
+      "meta": "MIT + Commons Clause \u00b7 vregistry (fetched 2026-10-22)",
+      "docs": "",
+      "site": "",
+      "source": "",
+      "page": "https://webdev.teknium.io/d/canvasui-html-effects/",
+      "score": 17.05,
+      "matched": [
+        "canvas",
+        "interactive",
+        "shader",
+        "ui"
+      ]
+    },
+    {
+      "slug": "canvasui-asciify-lens",
+      "name": "Canvas UI",
+      "subtitle": "ASCII lens over live HTML",
+      "section": "kits",
+      "framework": "react",
+      "tags": [
+        "webgl",
+        "html-in-canvas",
+        "shader"
+      ],
+      "tagline": "WebGL effects that post-process real, interactive HTML",
+      "install": "npx shadcn@latest add https://canvasui.dev/r/asciify-react.json",
+      "installFamily": "npx",
+      "demo_url": "https://webdev.teknium.io/d/kits3/demos/canvasui-asciify-lens/",
+      "meta": "MIT + Commons Clause \u00b7 vregistry (fetched 2026-10-22)",
+      "docs": "",
+      "site": "",
+      "source": "",
+      "page": "https://webdev.teknium.io/d/canvasui-asciify-lens/",
+      "score": 16.05,
+      "matched": [
+        "canvas",
+        "interactive",
+        "shader",
+        "ui"
+      ]
+    },
+    {
+      "slug": "drawille-braille",
+      "name": "drawille-canvas",
+      "subtitle": "Braille wireframe orbit",
+      "section": "glyph",
+      "framework": "vanilla",
+      "tags": [
+        "braille",
+        "canvas",
+        "wireframe",
+        "text"
+      ],
+      "tagline": "HTML5 Canvas 2D API that draws in Unicode braille dots",
+      "install": "npm i drawille-canvas",
+      "installFamily": "npm",
+      "demo_url": "https://webdev.teknium.io/d/glyph/demos/drawille-braille/",
+      "meta": "MIT \u00b7 v1.2.1",
+      "docs": "",
+      "site": "",
+      "source": "",
+      "page": "https://webdev.teknium.io/d/drawille-braille/",
+      "score": 14.05,
+      "matched": [
+        "ai",
+        "braille",
+        "canvas",
+        "dither"
+      ]
+    }
+  ]
+}

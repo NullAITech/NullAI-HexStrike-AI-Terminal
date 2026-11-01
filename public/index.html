@@ -3,69 +3,368 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HexStrike Security Arsenal — ZothOS Sovereign Local Cockpit</title>
+  <title>HexStrike Security Arsenal — Sovereign Red-Team &amp; Penetration Workstation</title>
   <style>
-    :root { --bg: #07080C; --card: #0F111A; --gold: #D4AF37; --emerald: #10B981; --text: #F3F4F6; --muted: #9CA3AF; }
+    :root {
+      --bg: #07090e;
+      --card: #0e131d;
+      --border: rgba(255, 51, 85, 0.28);
+      --gold: #D4AF37;
+      --crimson: #FF3355;
+      --emerald: #10B981;
+      --cyan: #38BDF8;
+      --text: #F8FAFC;
+      --muted: #94A3B8;
+      --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; min-height: 100vh; }
-    .bar { background: linear-gradient(90deg, rgba(16,185,129,0.14), rgba(212,175,55,0.16)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-size: 12px; }
-    .btn-gold { background: var(--gold); color: #08080B; padding: 6px 14px; border-radius: 6px; font-weight: 800; text-decoration: none; border: none; cursor: pointer; }
-    .btn-sol { background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 6px 14px; border-radius: 6px; font-weight: 800; text-decoration: none; cursor: pointer; }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
-    .card { background: var(--card); border: 1px solid rgba(212,175,55,0.28); border-radius: 14px; padding: 24px; margin-bottom: 20px; }
-    h1 { font-size: 1.8rem; color: #F5E6AB; margin-bottom: 8px; }
-    p { color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
-    textarea { width: 100%; min-height: 130px; background: #050609; color: #34D399; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; font-family: inherit; margin-bottom: 12px; }
-    pre { background: #050609; color: #F5E6AB; padding: 16px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.2); overflow-x: auto; white-space: pre-wrap; }
+    body {
+      background: radial-gradient(circle at 15% 10%, rgba(255, 51, 85, 0.08) 0%, #07090e 55%);
+      color: var(--text);
+      font-family: var(--mono);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .bar {
+      background: linear-gradient(90deg, rgba(255, 51, 85, 0.14), rgba(212, 175, 55, 0.14));
+      border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+      padding: 10px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+    }
+    .bar-left { color: var(--emerald); font-weight: 800; letter-spacing: 0.03em; }
+    .bar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 7px;
+      font-weight: 800;
+      font-size: 12px;
+      font-family: var(--mono);
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-gold { background: var(--gold); color: #08080B; }
+    .btn-crimson { background: var(--crimson); color: #FFFFFF; }
+    .btn-sol {
+      background: rgba(16, 185, 129, 0.14);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+    }
+    .btn-cyan {
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--cyan);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+    .wrap { max-width: 1320px; margin: 0 auto; padding: 24px 20px 48px; }
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+    }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .badge-crimson { background: rgba(255, 51, 85, 0.16); color: #FF6B81; border: 1px solid rgba(255, 51, 85, 0.35); }
+    .badge-emerald { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .badge-gold { background: rgba(212, 175, 55, 0.15); color: #F5E6AB; border: 1px solid rgba(212, 175, 55, 0.35); }
+    h1 { font-size: 1.65rem; color: #FFFFFF; margin-bottom: 6px; }
+    .subtitle { color: var(--muted); font-size: 0.86rem; line-height: 1.5; margin-bottom: 16px; }
+    .controls {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    @media (max-width: 900px) {
+      .controls { grid-template-columns: 1fr; }
+    }
+    label { display: block; font-size: 11px; color: var(--gold); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
+    input, select {
+      width: 100%;
+      background: #06080d;
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 7px;
+      padding: 9px 11px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 960px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .panel-title { font-size: 0.88rem; font-weight: 800; color: var(--gold); }
+    pre {
+      background: #05070b;
+      color: #38BDF8;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .table-wrap { overflow-x: auto; max-height: 290px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; background: rgba(0, 0, 0, 0.35); position: sticky; top: 0; }
+    tr:hover { background: rgba(255, 51, 85, 0.07); cursor: pointer; }
+    .port-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .port-chip {
+      background: #06080d;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+    }
+    .port-chip.open {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: rgba(16, 185, 129, 0.08);
+    }
   </style>
 </head>
 <body>
-  <div class="bar">
-    <span style="color:#10B981;font-weight:800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS · ZOTHOS LOCAL DAEMON :8138</span>
-    <a class="btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee (Stripe)</a>
-    <a class="btn-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...!'">◎ Solana Tip (GG2e...dXoK)</a>
-  </div>
-  <div class="wrap">
-    <div class="card">
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-        <span style="background:rgba(16,185,129,0.15);color:#34D399;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:800;">ZOTHOS INSTALLED · /usr/local/bin/hexstrike-arsenal</span>
-        <span style="background:rgba(212,175,55,0.15);color:#F5E6AB;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:800;">v3.1.0 · Security & Recon</span>
-      </div>
-      <h1>HexStrike Security Arsenal</h1>
-      <p>Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
-        <a class="btn-gold" href="http://127.0.0.1:3000/tools/hexstrike-arsenal">Open Zoth Studio God-Mode Workbench ↗</a>
-        <a class="btn-sol" href="https://zoth.nullai.tech/tools/hexstrike-arsenal" target="_blank" rel="noopener">Public Web Mirror ↗</a>
-      </div>
+  <header class="bar">
+    <div class="bar-left">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS · HEXSTRIKE ARSENAL DAEMON :8138</div>
+    <div class="bar-actions">
+      <a class="btn btn-gold" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer">☕ Buy Us a Coffee</a>
+      <a class="btn btn-sol" href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="navigator.clipboard&&navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied Solana Tip!';">◎ Solana Tip (GG2e...dXoK)</a>
     </div>
-    <div class="card">
-      <h2 style="font-size:1.1rem;color:#D4AF37;margin-bottom:10px;">Interactive Local Execution &amp; CLI Telemetry</h2>
-      <textarea id="inp">{
-  "tool": "hexstrike-arsenal",
-  "port": 8138,
-  "mode": "sovereign_local_enclave",
-  "zero_egress": true
-}</textarea>
-      <div style="display:flex;gap:10px;margin-bottom:14px;">
-        <button class="btn-gold" onclick="runLocal()">Execute Local Synthesis ⚡</button>
-        <button class="btn-sol" onclick="navigator.clipboard.writeText(document.getElementById('out').textContent)">Copy Output</button>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="badges">
+        <span class="badge badge-crimson">120-TOOL OFFENSIVE ARSENAL</span>
+        <span class="badge badge-emerald">REAL TCP SOCKET SWEEPER</span>
+        <span class="badge badge-gold">CVE &amp; MITRE ATT&amp;CK MATRIX</span>
       </div>
-      <pre id="out">$ hexstrike-arsenal --json
-{
-  "id": "hexstrike-arsenal",
-  "name": "HexStrike Security Arsenal",
-  "status": "READY",
-  "binary": "/usr/local/bin/hexstrike-arsenal",
-  "port": 8138,
-  "license": "100% Free & Open Access"
-}</pre>
+      <h1>HexStrike Autonomous Penetration &amp; Red-Team Workstation</h1>
+      <p class="subtitle">
+        Sovereign AI-driven offensive security command synthesizer, non-destructive loopback/network TCP socket scanner, and high-risk CVE intelligence radar.
+      </p>
+
+      <div class="controls">
+        <div>
+          <label for="targetInput">Target Host / Domain / IP</label>
+          <input id="targetInput" type="text" value="127.0.0.1" />
+        </div>
+        <div>
+          <label for="toolSelect">Offensive Module</label>
+          <select id="toolSelect" onchange="synthesizeCommand()">
+            <option value="nmap">nmap — Network Discovery &amp; Version Probe</option>
+            <option value="sqlmap">sqlmap — Automated SQL Injection Auditor</option>
+            <option value="gobuster">gobuster — Directory &amp; VHost Brute-Forcer</option>
+            <option value="nuclei">nuclei — CVE Template Vulnerability Scanner</option>
+            <option value="ffuf">ffuf — High-Speed Web Endpoint Fuzzer</option>
+            <option value="hydra">hydra — Network Service Auth Auditor</option>
+            <option value="metasploit">metasploit — Auxiliary TCP Portscanner</option>
+          </select>
+        </div>
+        <div>
+          <label for="portsInput">TCP Socket Sweep Ports</label>
+          <input id="portsInput" type="text" value="22,80,443,3000,8131,8138,8151,11434" />
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnRunStrike" class="btn btn-crimson" onclick="runFullStrike()">⚡ Execute Strike &amp; Sweep</button>
+          <button id="btnFilterScore" class="btn btn-cyan" onclick="loadCatalog(10)">★ Top Score (10/10)</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid-2">
+      <!-- Left: Synthesized Command & Live Socket Sweep -->
+      <section class="panel">
+        <div class="panel-header">
+          <span class="panel-title">⚡ Synthesized Offensive Command &amp; Live TCP Socket Sweep</span>
+          <span id="scanBadge" class="badge badge-emerald">ENCLAVE READY</span>
+        </div>
+        <pre id="cmdBox">$ nmap -sV -sC 127.0.0.1</pre>
+
+        <div style="margin-top: 14px;">
+          <div style="font-size: 12px; color: var(--muted); margin-bottom: 6px;">
+            Live TCP Socket Probe Telemetry (<span id="scanSummary">Probing loopback enclave...</span>):
+          </div>
+          <div id="portGrid" class="port-grid"></div>
+        </div>
+      </section>
+
+      <!-- Right: CVE Threat Intelligence Radar -->
+      <section class="panel">
+        <div class="panel-header">
+          <span class="panel-title">🔥 Active CVE &amp; EPSS Threat Intelligence Matrix</span>
+          <span class="badge badge-crimson">2026-FTQC SYNCED</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>CVE ID</th>
+                <th>CVSS</th>
+                <th>EPSS</th>
+                <th>Vulnerability &amp; Remediation</th>
+              </tr>
+            </thead>
+            <tbody id="cveBody"></tbody>
+          </table>
+        </div>
+      </section>
     </div>
-  </div>
+
+    <!-- Bottom: 120-Tool Offensive Arsenal Catalog -->
+    <section class="panel">
+      <div class="panel-header">
+        <span class="panel-title">⚔️ HexStrike Offensive Security Arsenal (<span id="toolCount">120</span> Verified Tools)</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-sol" style="padding:4px 10px;font-size:11px;" onclick="loadCatalog(1, '')">All Tools</button>
+          <button class="btn btn-sol" style="padding:4px 10px;font-size:11px;" onclick="loadCatalog(1, 'Recon')">Recon</button>
+          <button class="btn btn-sol" style="padding:4px 10px;font-size:11px;" onclick="loadCatalog(1, 'Web')">Web</button>
+          <button class="btn btn-sol" style="padding:4px 10px;font-size:11px;" onclick="loadCatalog(1, 'Exploit')">Exploit</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tool ID</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Score</th>
+              <th>Tags</th>
+            </tr>
+          </thead>
+          <tbody id="arsenalBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
   <script>
-    function runLocal() {
-      const v = document.getElementById("inp").value;
-      document.getElementById("out").textContent = "[ZOTHOS-ENCLAVE] Executed at " + new Date().toISOString() + "\n" + v;
+    async function synthesizeCommand() {
+      const tool = document.getElementById('toolSelect').value;
+      const target = document.getElementById('targetInput').value || '127.0.0.1';
+      try {
+        const r = await fetch(`/api/cmd?tool=${encodeURIComponent(tool)}&target=${encodeURIComponent(target)}`);
+        const d = await r.json();
+        document.getElementById('cmdBox').textContent = `$ ${d.command}\n# [HEXSTRIKE-MCP] Ready for execution against ${d.target}`;
+      } catch (e) {
+        document.getElementById('cmdBox').textContent = `$ ${tool} ${target}`;
+      }
     }
+
+    async function runFullStrike() {
+      const tool = document.getElementById('toolSelect').value;
+      const target = document.getElementById('targetInput').value || '127.0.0.1';
+      const ports = document.getElementById('portsInput').value || '22,80,443,3000,8138,8151';
+      await synthesizeCommand();
+      try {
+        const r = await fetch(`/api/scan?target=${encodeURIComponent(target)}&ports=${encodeURIComponent(ports)}`);
+        const d = await r.json();
+        document.getElementById('scanSummary').textContent = `${d.open_count} Open / ${d.scanned_count} Probed on ${d.host}`;
+        document.getElementById('scanBadge').textContent = `${d.open_count} OPEN PORTS DETECTED`;
+        const requestedPorts = ports.split(',').map(p => parseInt(p.trim(), 10)).filter(Boolean);
+        const grid = document.getElementById('portGrid');
+        grid.innerHTML = requestedPorts.map(p => {
+          const isOpen = (d.open_ports || []).includes(p);
+          return `<div class="port-chip ${isOpen ? 'open' : ''}">
+            <div style="font-weight:800;color:${isOpen ? '#34D399' : '#94A3B8'};">TCP :${p}</div>
+            <div style="font-size:11px;margin-top:3px;color:${isOpen ? '#A7F3D0' : '#64748B'};">${isOpen ? '● OPEN (ACTIVE)' : '○ CLOSED / FILTERED'}</div>
+          </div>`;
+        }).join('');
+      } catch (e) {}
+    }
+
+    async function loadCatalog(minScore = 1, category = '') {
+      try {
+        const r = await fetch(`/api/tools?min_score=${minScore}&category=${encodeURIComponent(category)}`);
+        const d = await r.json();
+        document.getElementById('toolCount').textContent = d.count;
+        const tbody = document.getElementById('arsenalBody');
+        tbody.innerHTML = (d.tools || []).slice(0, 40).map(t => `
+          <tr onclick="document.getElementById('toolSelect').value='${t.id}';synthesizeCommand();">
+            <td style="color:#38BDF8;font-weight:700;">${t.id}</td>
+            <td style="color:#F8FAFC;">${t.name}</td>
+            <td><span class="badge badge-gold">${t.category}</span></td>
+            <td style="color:#34D399;font-weight:800;">${t.usefulness}/10</td>
+            <td style="color:#94A3B8;">${(t.tags || []).join(', ')}</td>
+          </tr>
+        `).join('');
+      } catch (e) {}
+    }
+
+    async function loadStatus() {
+      try {
+        const r = await fetch('/api/status');
+        const d = await r.json();
+        const tbody = document.getElementById('cveBody');
+        tbody.innerHTML = (d.cves || []).map(c => `
+          <tr>
+            <td style="color:#FF6B81;font-weight:800;white-space:nowrap;">${c.id}</td>
+            <td style="color:#F5E6AB;font-weight:800;">${c.cvss}</td>
+            <td style="color:#38BDF8;">${c.epss}</td>
+            <td>
+              <div style="color:#F8FAFC;font-weight:700;">${c.title}</div>
+              <div style="color:#94A3B8;font-size:11px;margin-top:2px;">Fix: ${c.mitigation}</div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {}
+    }
+
+    loadStatus();
+    loadCatalog(1, '');
+    runFullStrike();
   </script>
+  <script src="/assets/sovereign-upgrade.js" defer></script>
 </body>
 </html>
