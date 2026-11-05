@@ -365,6 +365,22 @@
     loadCatalog(1, '');
     runFullStrike();
   </script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "hexstrike-arsenal",
+          toolName: "HexStrike Security Arsenal",
+          tagline: "Automated penetration testing toolkit and AI security terminal!",
+          accentColor: "#EF4444",
+          steps: [{"icon": "\u2694\ufe0f", "title": "Ethical Hacking Workbench", "desc": "Combines network scanners (Nmap, Nikto) with local AI to find open vulnerabilities in your servers."}, {"icon": "\ud83e\udde0", "title": "AI Vulnerability Explainer", "desc": "Translates complex terminal outputs and CVE logs into clear, actionable fix instructions."}, {"icon": "\ud83d\udee1\ufe0f", "title": "Defense Hardening Guide", "desc": "Gives you step-by-step firewall rules and patches to protect your infrastructure."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
