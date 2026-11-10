@@ -1,6 +1,6 @@
 /**
  * Sovereign Reusable Kid-Friendly Tutorial & Braille/ASCII Magic Engine
- * Author: Neal Frazier Tech (@1nc0gn30) • NullAI Platform
+ * Author: 1nc0gn30 (@1nc0gn30) • NullAI Platform
  */
 (function() {
   if (window.__SOVEREIGN_TUTORIAL_ATTACHED__) return;
