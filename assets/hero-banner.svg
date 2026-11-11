@@ -29,7 +29,7 @@
     <rect x="0" y="-14" width="420" height="22" rx="11" fill="rgba(255,255,255,0.06)" stroke="#D4AF37" stroke-opacity="0.45"/>
     <text x="12" y="1" fill="#D4AF37" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" letter-spacing="1.1">SOVEREIGN // NULLAI ENGINE // PORT :8138</text>
     <text x="0" y="34" fill="#FFFFFF" font-family="Syne, Space Grotesk, sans-serif" font-size="30" font-weight="800" letter-spacing="0.4">HEXSTRIKE SECURITY ARSENAL</text>
-    <text x="0" y="60" fill="#94A3B8" font-family="Inter, sans-serif" font-size="13.5">156-tool offensive catalog, TCP socket sweeper, CVE matrix inspector, and stdio MCP server.</text>
+    <text x="0" y="60" fill="#94A3B8" font-family="Inter, sans-serif" font-size="13.5">Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.</text>
   </g>
 
   <!-- 3 Feature Cards -->
