@@ -15,17 +15,21 @@ const isWeb = args[0] === 'web' || args.includes('--web');
 const isAppRequest = !isWeb && (args.length === 0 || args.includes('--gui') || args.includes('--app') || args.includes('--desktop') || args[0] === 'app' || args[0] === 'desktop' || args[0] === 'gui');
 
 if (isWeb) {
-  console.log('⚡ Launching NullAI HexStrike Web UI on http://127.0.0.1:8000 ...');
-  const pyChild = spawn('python3', [path.join(rootDir, 'backend', 'main.py')], {
+  const port = process.env.PORT || '8138';
+  const host = process.env.HOST || '127.0.0.1';
+  console.log(`Launching NullAI HexStrike Web Workstation on http://${host}:${port} ...`);
+  const pyChild = spawn('python3', [path.join(rootDir, 'server.py')], {
     cwd: rootDir,
     stdio: 'inherit',
     env: {
       ...process.env,
+      HOST: host,
+      PORT: port,
       ZOTH_ZERO_EGRESS: 'true',
     },
   });
   pyChild.on('error', (pyErr) => {
-    console.error('[HexStrike] Failed to start backend:', pyErr);
+    console.error('[HexStrike] Failed to start server:', pyErr);
   });
 } else if (isAppRequest) {
   console.log('⚡ Launching NullAI HexStrike Terminal Desktop Workstation...');

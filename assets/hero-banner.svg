@@ -27,30 +27,30 @@
   <!-- Header Copy -->
   <g transform="translate(152, 62)">
     <rect x="0" y="-14" width="420" height="22" rx="11" fill="rgba(255,255,255,0.06)" stroke="#D4AF37" stroke-opacity="0.45"/>
-    <text x="12" y="1" fill="#D4AF37" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" letter-spacing="1.1">SOVEREIGN // NULLAI ENGINE // PORT :8888</text>
+    <text x="12" y="1" fill="#D4AF37" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" letter-spacing="1.1">SOVEREIGN // NULLAI ENGINE // PORT :8138</text>
     <text x="0" y="34" fill="#FFFFFF" font-family="Syne, Space Grotesk, sans-serif" font-size="30" font-weight="800" letter-spacing="0.4">HEXSTRIKE SECURITY ARSENAL</text>
-    <text x="0" y="60" fill="#94A3B8" font-family="Inter, sans-serif" font-size="13.5">Autonomous penetration audit suite, CVE matrix inspector, and exploit payload lab.</text>
+    <text x="0" y="60" fill="#94A3B8" font-family="Inter, sans-serif" font-size="13.5">156-tool offensive catalog, TCP socket sweeper, CVE matrix inspector, and stdio MCP server.</text>
   </g>
 
   <!-- 3 Feature Cards -->
   <g transform="translate(52, 168)">
     <rect x="0" y="0" width="352" height="98" rx="12" fill="#101320" stroke="#D4AF37" stroke-opacity="0.38"/>
     <text x="18" y="30" fill="#D4AF37" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">PILLAR 01 // CAPABILITY</text>
-    <text x="18" y="56" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700">100% Zero-Egress Client &amp; Local Enclave Ex</text>
-    <text x="18" y="78" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="10.5">Verified Client &amp; Enclave Runtime</text>
+    <text x="18" y="56" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700">Zero-Egress Local Enclave Execution</text>
+    <text x="18" y="78" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="10.5">156 Security Tools &amp; Command Synthesizer</text>
 
     <rect x="372" y="0" width="352" height="98" rx="12" fill="#101320" stroke="#38BDF8" stroke-opacity="0.38"/>
     <text x="390" y="30" fill="#38BDF8" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">PILLAR 02 // ARCHITECTURE</text>
-    <text x="390" y="56" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700">Real-Time Interactive Telemetry &amp; AST Veri</text>
-    <text x="390" y="78" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="10.5">Mode: LOCAL_CLI • Port :8888</text>
+    <text x="390" y="56" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700">TCP Socket Sweep &amp; CVE Threat Matrix</text>
+    <text x="390" y="78" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="10.5">Loopback HTTP Daemon • 127.0.0.1:8138</text>
 
     <rect x="744" y="0" width="352" height="98" rx="12" fill="#101320" stroke="#D4AF37" stroke-opacity="0.38"/>
     <text x="762" y="30" fill="#D4AF37" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">PILLAR 03 // ECOSYSTEM</text>
-    <text x="762" y="56" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700">Native Zoth Studio v2 &amp; ZothOS v3.3 Integr</text>
-    <text x="762" y="78" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="10.5">Zoth Studio v2 (:3000) &amp; ZothOS v3.3</text>
+    <text x="762" y="56" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700">Zoth Studio v2 &amp; ZothOS v3.4.0 Native</text>
+    <text x="762" y="78" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="10.5">JSON-RPC 2.0 MCP • Braille TUI</text>
   </g>
 
   <text x="600" y="298" text-anchor="middle" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="10.5">
-    ENGINEERED BY 1NC0GN30 • NULLAI (@1nc0gn30)  •  NULLAI PLATFORM  •  ZOTH.NULLAI.TECH
+    ENGINEERED BY 1NC0GN30 (@1nc0gn30)  •  NULLAI PLATFORM  •  ZOTH.NULLAI.TECH
   </text>
 </svg>

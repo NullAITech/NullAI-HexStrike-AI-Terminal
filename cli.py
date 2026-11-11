@@ -66,9 +66,10 @@ def main() -> int:
     subparsers.add_parser("mcp", help="Run Model Context Protocol (MCP) JSON-RPC stdio server", parents=[base_parser])
 
     # 6. serve
-    p_serve = subparsers.add_parser("serve", help="Launch FastAPI backend server", parents=[base_parser])
-    p_serve.add_argument("--port", type=int, default=8000, help="Port to listen on (default 8000)")
-    p_serve.add_argument("--host", type=str, default="127.0.0.1", help="Host address (default 127.0.0.1)")
+    p_serve = subparsers.add_parser("serve", help="Launch HexStrike HTTP workstation server", parents=[base_parser])
+    p_serve.add_argument("--port", type=int, default=8138, help="Port to listen on (default: 8138)")
+    p_serve.add_argument("--host", type=str, default="127.0.0.1", help="Host address (default: 127.0.0.1)")
+    p_serve.add_argument("--fastapi", action="store_true", help="Run optional FastAPI backend instead of standalone server.py")
 
     args = parser.parse_args()
 
@@ -140,14 +141,21 @@ def main() -> int:
         return 0
 
     if args.command == "serve":
-        try:
-            import uvicorn
-            print(f"Launching HexStrike Backend at http://{args.host}:{args.port}...")
-            uvicorn.run("backend.main:app", host=args.host, port=args.port, reload=False)
-            return 0
-        except Exception as e:
-            print(f"Error launching backend: {e}", file=sys.stderr)
-            return 1
+        if args.fastapi:
+            try:
+                import uvicorn
+                print(f"Launching HexStrike FastAPI Backend at http://{args.host}:{args.port}...")
+                uvicorn.run("backend.main:app", host=args.host, port=args.port, reload=False)
+                return 0
+            except Exception as e:
+                print(f"Error launching FastAPI backend: {e}", file=sys.stderr)
+                return 1
+        import os
+        os.environ["HOST"] = args.host
+        os.environ["PORT"] = str(args.port)
+        from server import main as run_standalone_server
+        run_standalone_server()
+        return 0
 
     parser.print_help()
     return 0

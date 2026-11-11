@@ -164,7 +164,7 @@
     "id": "katana",
     "name": "Katana",
     "category": "Recon",
-    "info": "Next-generation crawling and spidering framework by Project Discovery.",
+    "info": "Modern crawling and spidering framework by Project Discovery.",
     "link": "https://github.com/projectdiscovery/katana",
     "usefulness": 8,
     "difficulty": "intermediate",

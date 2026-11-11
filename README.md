@@ -1,288 +1,167 @@
 <div align="center">
-  <img src="assets/hero-banner.svg" alt="HexStrike Security Arsenal — Sovereign Architecture Banner" width="100%" />
+  <img src="assets/hero-banner.svg" alt="HexStrike Security Arsenal Banner" width="100%" />
 </div>
 
-<br />
+# HexStrike Security Arsenal
 
-# ◈ HexStrike Security Arsenal & Studio
+HexStrike (`NullAI-HexStrike-AI-Terminal`) is a local-first offensive security command synthesizer, non-destructive TCP socket sweeper, CVE/EPSS reference workstation, and Model Context Protocol (MCP) JSON-RPC 2.0 stdio server. It indexes 156 Kali and Parrot security binaries across 11 operational categories and runs with zero external telemetry on loopback port `127.0.0.1:8138`.
 
-**HexStrike** — Sovereign red teaming workstation and penetration audit suite powered by the Ghost Byte neural core. 156+ Kali/Parrot security binaries, AI-driven attack chaining, real-time threat intelligence. 100% Free & Open Access with zero paywalls.
-
-☕ **Support Development**:
-- **Stripe Buy Us a Coffee**: [https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
-- **Solana Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
+- **Zoth Studio v2 Dossier**: [https://zoth.nullai.tech/tools/hexstrike-arsenal](https://zoth.nullai.tech/tools/hexstrike-arsenal)
+- **Standalone Loopback Daemon**: `http://127.0.0.1:8138`
+- **Support Development**: [https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
 
 ---
 
-## ◈ ZothOS CLI Binary (`hexstrike-arsenal` / `hexstrike`)
+## Overview
 
-```bash
-# Check version and JSON telemetry
-hexstrike-arsenal --version
-hexstrike-arsenal --json
+HexStrike provides a deterministic interface for red-team reconnaissance, command generation, and local port auditing without transmitting target profiles or scan logs outside the local host (`~/.hexstrike/intel.json`).
 
-# List tools from the 156+ security arsenal
-hexstrike-arsenal tools --json
-
-# Generate offensive syntax for a tool
-hexstrike-arsenal cmd nmap --target 127.0.0.1
-
-# Execute a rapid port sweep
-hexstrike-arsenal scan 127.0.0.1 -p 80,443,8080,8138
-
-# Start the standalone Web Workstation on port 8138
-python3 server.py
-# or
-hexstrike-arsenal serve --port 8138
-```
+Key capabilities:
+- **156-Tool Security Catalog**: Searchable JSON index (`ui/src/data/tools.json`) spanning Exploit (48), Web (32), Recon (30), Post-Exploit (14), OSINT (9), Documentation (6), Neural (5), Password (5), Wordlist (3), Container (2), and Cloud (2) tools, each annotated with `usefulness` (1-10), `difficulty`, and `tags`.
+- **Canonical Command Synthesizer**: Sanitizes shell metacharacters (`;`, `&`, `|`) from target inputs and generates reproducible invocation strings for tools such as `nmap`, `masscan`, `amass`, `gobuster`, `ffuf`, `nikto`, `sqlmap`, `nuclei`, `hydra`, `hashcat`, `metasploit`, and `trivy`.
+- **TCP Socket Port Sweeper**: Zero-dependency Python `socket` probe (`run_socket_port_scan`) for rapid loopback and internal network reachability verification.
+- **CVE & EPSS Reference Matrix**: Built-in high-impact vulnerability reference (`CVE-2024-6387`, `CVE-2024-3094`, `CVE-2024-21626`, `CVE-2023-44487`, `CVE-2021-44228`) with CVSS, EPSS, MITRE ATT&CK technique IDs, and remediation notes.
+- **Native MCP Server**: JSON-RPC 2.0 over `stdio` (`mcp_server.py`) exposing 5 structured tools to Claude Desktop, Cursor, Hermes Agent, and OpenCode.
 
 ---
 
-## ◈ Features
+## Architecture
 
-### Neural Intelligence Core
-- **Real-Time Analysis** — Every tool output streamed through neural engine mapping vulnerabilities to MITRE ATT&CK
-- **Sovereign Playbooks** — Pre-defined attack chains: Recon → Web Vuln → Cred Blast → Exfil
-- **Neural Autopilot** — Self-driving mode at 80% compromise threshold
-- **Target Intelligence Persistence** — Local `intel.json` profile storage across sessions
-
-### Sovereign Arsenal (156 Kali/Parrot Security Binaries)
-- **AI Red Teaming**: `garak`, `llmfuzzer`, `vigil`, `iatelligence`
-- **Network Recon**: `nmap`, `masscan`, `amass`, `subfinder`, `rustscan`
-- **Web Exploitation**: `sqlmap`, `nikto`, `gobuster`, `ffuf`, `wapiti`, `xsstrike`, `nuclei`
-- **Credential Attacks**: `hydra`, `hashcat`, `john`, `cewl`
-- **Post-Exploitation**: `metasploit`, `bettercap`, `sliver`
-- **Cloud/Container**: `pacu`, `kubescape`, `trivy`, `scoutsuite`, `prowler`
-- **OSINT**: `theharvester`, `shodan`, `recondev`, `dnsenum`
-- **Church of Malware**: `cloudTOWN`, `PEN_toolkit`, `Cerberus`, `ROGUE`
-
-### Operator Interface
-- **Ghost Byte Aesthetic** — Void-Red/Blood-Red/Obsidian CRT theme, nullai.tech brand
-- **Live-Wire Streaming** — Zero-latency SSE output
-- **Command Palette** — `Ctrl+K` fast-access tool execution with search, recent commands, keyboard nav
-- **Sovereign Reporting** — MD/JSON/CSV export with HTML reports
-- **Tool Detail Modal** — Click any tool for full info: description, usefulness rating, difficulty, tags
-- **Favorites** — Star tools to bookmark, persisted in localStorage
-- **Live Output Viewer** — Real-time strike output panel with auto-scroll
-- **Toast Notifications** — Color-coded green/red/purple, auto-dismiss 5s
-- **Accessibility** — ARIA labels, `:focus-visible`, skip-to-content, `prefers-reduced-motion`
-- **Responsive** — 3 breakpoints, slide-out drawers, 44px touch targets
+| Component | Path | Responsibility |
+| :--- | :--- | :--- |
+| Standalone HTTP Daemon | `server.py` | Zero-dependency `ThreadingMixIn` HTTP server on `127.0.0.1:8138` serving `public/` and `/api/*` |
+| Web Workstation UI | `public/index.html` | Single-file dark workstation for command synthesis, live TCP socket sweeps, CVE lookup, and catalog filtering |
+| CLI Entrypoint | `cli.py` | Scriptable CLI supporting `tools`, `cmd`, `scan`, `report`, `mcp`, and `serve` with `--json` output |
+| MCP Server | `mcp_server.py` | JSON-RPC 2.0 `stdio` server (`protocolVersion: 2024-11-05`) and shared catalog/scanner core |
+| Node / Electron Launcher | `bin/hexstrike.js` | Unified wrapper delegating CLI flags to `cli.py`, `web` to `server.py`, or GUI mode to Electron |
+| Braille TUI | `bin/hexstrike-arsenal-tui` | ZothOS v3.4.0 Unicode `U+2800` 2x4 Braille terminal telemetry monitor |
 
 ---
 
-## ◈ Architecture
+## Quickstart
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React + Vite (CRT shaders, dark theme) |
-| Backend | FastAPI + Python (async orchestration) |
-| Intelligence | LocalAI / GPT-4 (Neural reasoning layer) |
-| Tooling | Parrot OS / Kali Linux toolset |
-
----
-
-## ◈ Quick Start
+Clone the repository and run the standalone workstation or CLI directly with Python 3.10+:
 
 ```bash
 git clone https://github.com/NullAITech/NullAI-HexStrike-AI-Terminal.git
 cd NullAI-HexStrike-AI-Terminal
 
-# Initialize backend
-chmod +x setup-tools.sh && ./setup-tools.sh
+# Verify the CLI
+python3 cli.py --help
+python3 cli.py tools --category Recon --json
 
-# Launch Neural Core (LocalAI)
-chmod +x setup-localai.sh && ./setup-localai.sh
-
-# Start UI
-chmod +x setup-ui.sh && ./setup-ui.sh
+# Launch the standalone web workstation on http://127.0.0.1:8138
+python3 server.py
 ```
 
-UI opens at `http://localhost:5173`, API at `http://localhost:8000`, LocalAI at `http://localhost:8090`.
+Optional environment variables for `server.py`:
+- `HOST` — Bind address (default: `127.0.0.1`)
+- `PORT` — Listen port (default: `8138`)
+
+If you also want to build the optional React/Vite frontend (`ui/`) or Electron desktop shell:
+
+```bash
+npm install
+npm run build:ui
+```
 
 ---
 
-## ◈ Usage
+## CLI & MCP Usage
 
-1. **Set Target** — Enter IP/domain in `TARGET_VECTOR` bar
-2. **Select Vector** — Single tool or Sovereign Playbook for automated chaining
-3. **Execute Strike** — Watch real-time neural analysis
-4. **Auto-Pilot** — Toggle autopilot at 80% compromise threshold
-5. **Export** — MD/JSON/CSV report download
+### Command-Line Interface (`cli.py`)
 
----
+All subcommands accept `--json` for structured machine-readable output:
 
-## ◈ Tool Categories (11 groups)
+```bash
+# Filter the 156-tool catalog by category, tag, or minimum usefulness score (1-10)
+python3 cli.py tools --category Web --min-score 9
+python3 cli.py tools --tag sqli --json
 
-| Category | Count | Tools |
-|----------|-------|-------|
-| Exploit | 48 | metasploit, sqlmap, hydra, nikto, etc. |
-| Web | 32 | gobuster, ffuf, wapiti, xsstrike, nuclei, etc. |
-| Recon | 30 | nmap, masscan, amass, subfinder, rustscan, etc. |
-| Post-Exploit | 14 | bettercap, sliver, mimikatz, etc. |
-| OSINT | 9 | theharvester, shodan, recondev, dnsenum, etc. |
-| Documentation | 6 | Rogue_Article, docs, etc. |
-| Neural | 5 | garak, llmfuzzer, vigil, etc. |
-| Password | 5 | hashcat, john, cewl, etc. |
-| Wordlist | 3 | rockyou, seclists, etc. |
-| Container | 2 | trivy, kubescape, etc. |
-| Cloud | 2 | pacu, scoutsuite, etc. |
+# Synthesize canonical command syntax for a target
+python3 cli.py cmd nmap 127.0.0.1
+python3 cli.py cmd sqlmap target.local --json
 
-Each tool has: `usefulness` (1-10), `difficulty` (beginner/intermediate/advanced), `tags` (4-5 keywords), `category_order` (1-11).
+# Execute a non-destructive TCP socket sweep
+python3 cli.py scan 127.0.0.1 --ports 22,80,443,3000,8138
 
----
+# Generate a Markdown assessment summary
+python3 cli.py report target.local --json
 
-## ◈ API Endpoints
+# Start the HTTP workstation daemon on 127.0.0.1:8138
+python3 cli.py serve --host 127.0.0.1 --port 8138
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/ping` | Target reachability check |
-| GET | `/api/session/list` | List saved sessions |
-| POST | `/api/session/save` | Save target session |
-| POST | `/api/session/load` | Load target session |
-| POST | `/api/portscan` | Port scanner (nmap) |
-| POST | `/api/strike` | Execute tool strike |
-| GET | `/api/templates` | Command templates CRUD |
-| GET | `/api/fingerprint` | Target fingerprinting |
-| POST | `/api/report/generate` | Generate HTML report |
-| GET | `/api/report/download` | Download report |
-| GET | `/api/export-json` | Export as JSON |
-| GET | `/api/export-csv` | Export as CSV |
+# Start the JSON-RPC 2.0 MCP server on stdio
+python3 cli.py mcp
+```
 
----
+### Model Context Protocol (`mcp_server.py`)
 
-## ◈ Model Context Protocol (MCP) Server
-
-HexStrike features a native **Model Context Protocol (MCP)** JSON-RPC 2.0 stdio server, allowing Claude Desktop, Cursor, Hermes Agent, OpenCode, and AGY to directly orchestrate red team operations, query the 156+ tool arsenal, generate verified commands, and conduct non-destructive socket sweeps.
-
-### Claude Desktop / Cursor Configuration
-
-Add to your `claude_desktop_config.json` or Cursor MCP settings:
+Add HexStrike to `claude_desktop_config.json`, Cursor MCP settings, or Hermes Agent configuration:
 
 ```json
 {
   "mcpServers": {
     "hexstrike": {
       "command": "python3",
-      "args": [
-        "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/NullAI-HexStrike-AI-Terminal/mcp_server.py"
-      ]
+      "args": ["/path/to/NullAI-HexStrike-AI-Terminal/mcp_server.py"]
     }
   }
 }
 ```
 
-### Exposed MCP Tools
-
-- `hexstrike_list_tools`: Search or filter 156+ offensive tools by category, tag, and minimum usefulness score.
-- `hexstrike_generate_cmd`: Generate canonical CLI command syntax for a tool against a target with safety guardrails.
-- `hexstrike_port_scan`: Run high-speed TCP socket sweeps against targets or local loopback (127.0.0.1).
-- `hexstrike_target_intel`: Retrieve stored target intelligence, command history, and findings.
-- `hexstrike_generate_report`: Generate sovereign markdown assessment reports.
+Exposed MCP tools:
+- `hexstrike_list_tools` — Filter the 156-tool catalog by `category`, `tag`, and `min_usefulness`.
+- `hexstrike_generate_cmd` — Generate sanitized CLI invocation syntax for `tool` and `target`.
+- `hexstrike_port_scan` — Run a TCP socket sweep against `host` (default `127.0.0.1`) and `ports`.
+- `hexstrike_target_intel` — Read stored local target history from `~/.hexstrike/intel.json`.
+- `hexstrike_generate_report` — Render a Markdown red-team assessment template for `target`.
 
 ---
 
-## ◈ Command Line Interface (CLI)
+## REST API Endpoints
 
-The `cli.py` binary provides a standalone, scriptable interface for humans and AI agents:
+When running `python3 server.py` on `http://127.0.0.1:8138`:
+
+| Method | Path | Parameters / Body | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/health`, `/api/health` | None | Service health, version (`3.1.0`), `arsenal_count`, and `mcp_tools` count |
+| `GET` | `/api/status`, `/api/analytics` | None | Service capabilities and built-in CVE/EPSS matrix |
+| `GET` | `/api/tools` | `?category=<str>&min_score=<int>` | Filtered list of tools from the 156-tool catalog |
+| `GET` | `/api/cmd` | `?tool=<id>&target=<host>` | Synthesized CLI command string |
+| `GET` | `/api/scan` | `?target=<host>&ports=22,80,8138` | Live TCP socket probe results (`open_ports`, `scanned_count`) |
+| `POST` | `/execute`, `/api/execute` | `{"tool":"nmap","target":"127.0.0.1","ports":[3000,8138]}` | Combined command synthesis and TCP socket probe |
+
+---
+
+## ZothOS & Zoth Studio Integration
+
+- **Zoth Studio v2**: Indexed as `hexstrike-arsenal` at [https://zoth.nullai.tech/tools/hexstrike-arsenal](https://zoth.nullai.tech/tools/hexstrike-arsenal) (`http://127.0.0.1:3000/tools/hexstrike-arsenal`), polling `http://127.0.0.1:8138/health`.
+- **ZothOS v3.4.0 CLI & Braille TUI**: Pre-linked in `/usr/local/bin/hexstrike-arsenal` and `/usr/local/bin/hexstrike-arsenal-tui`:
+  ```bash
+  hexstrike-arsenal --help
+  hexstrike-arsenal tools --json
+  hexstrike-arsenal-tui --status
+  ```
+
+---
+
+## Testing & Verification
+
+Run the automated `pytest` unit and MCP stdio integration suite:
 
 ```bash
-# List tools in the arsenal (filterable by category, tag, score)
-python3 cli.py tools --category Recon
-python3 cli.py tools --tag sqli --json
-
-# Generate offensive command syntax
-python3 cli.py cmd nmap 192.168.1.1
-python3 cli.py cmd sqlmap https://test.local --json
-
-# Run rapid loopback socket port sweep
-python3 cli.py scan 127.0.0.1 --ports 80,443,3000,8000,8788,11434
-
-# Generate comprehensive markdown assessment report
-python3 cli.py report target.internal
-
-# Run Model Context Protocol (MCP) server
-python3 cli.py mcp
+python3 -m pytest -q
 ```
 
----
-
-## ◈ Testing & Verification
-
-Run the automated test suite with pytest:
+Verify secret hygiene with Gitleaks:
 
 ```bash
-pytest tests/ -v
+gitleaks detect --source . --no-banner --redact
 ```
-
----
-
-## ◈ Sovereign Invariants
-
-- **Zero-Egress by Default**: All tool execution, target intelligence, and reporting stay strictly confined to the local host (`~/.hexstrike/`). No cloud phone-home or third-party telemetry.
-- **Enclave Confinement**: Default network reconnaissance and sockets target `127.0.0.1` and configured internal networks.
-- **Universal Interoperability**: Dual-compatible with humans (rich CLI tables & CRT web terminal) and autonomous agents (JSON-RPC 2.0 MCP & `--json` flags).
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
-
-**STATUS**: `Sovereign` | **KERNEL**: `Stable` | **INTELLIGENCE**: `Active`
-
----
-
-## 🏛️ ZothOS v3.4, Zoth Studio v2 & Obsidian Second Brain Ecosystem
-
-```mermaid
-flowchart LR
-    subgraph ZothOS["🐧 ZothOS v3.4 CLI & Braille TUI"]
-        CLI["NullAI-HexStrike-AI-Terminal --help / --json"]
-        TUI["NullAI-HexStrike-AI-Terminal-tui<br/>Unicode U+2800 2x4 Braille"]
-    end
-
-    subgraph Workstation["⚡ Sovereign Workstation"]
-        WEB["https://zoth.nullai.tech<br/>REST API & /health"]
-    end
-
-    subgraph Studio["🌌 Zoth Studio v2 & ZothOS-Lite"]
-        GODMODE["http://127.0.0.1:3000<br/>God-Mode Workstation"]
-        LITE["http://127.0.0.1:8145<br/>ZothOS-Lite Web Desktop"]
-    end
-
-    subgraph SecondBrain["💎 Obsidian Second Brain & STDP"]
-        TRACKER["http://127.0.0.1:8151<br/>Zoth Obsidian Tracker"]
-        NEURO["http://127.0.0.1:8094<br/>Neuro-Memory STDP Cortex"]
-        NOTE["00 Home.md"]
-    end
-
-    CLI --> WEB
-    TUI --> WEB
-    WEB <--> GODMODE
-    WEB <--> LITE
-    WEB --> TRACKER
-    TRACKER <--> NOTE
-    NOTE <--> NEURO
-```
-
-### Cross-Surface Integration Matrix
-
-| Surface | Endpoint / Binary | Capabilities |
-| :--- | :--- | :--- |
-| **Standalone Workstation** | `https://zoth.nullai.tech` | 100% Free & Open-Access Web Deck, live `/health` & REST telemetry |
-| **Zoth Studio v2 Route** | `http://127.0.0.1:3000` | Interactive God-Mode component inside Zoth Studio (`https://zoth.nullai.tech`) |
-| **ZothOS v3.4 CLI & TUI** | `NullAI-HexStrike-AI-Terminal` / `NullAI-HexStrike-AI-Terminal-tui` | Global binary in `/usr/local/bin/` with Unicode `U+2800` Braille TUI & `--json` output |
-| **ZothOS-Lite Web Desktop** | `http://127.0.0.1:8145` | Browser-native KDE-style window manager & terminal launcher |
-| **Zoth Obsidian Tracker** | `http://127.0.0.1:8151` | Interactive Obsidian Second Brain vault explorer (`~/Documents/Obsidian Vault/00 Home.md`) |
-| **Neuro-Memory STDP Cortex** | `http://127.0.0.1:8094` | 3-Factor STDP synaptic memory daemon & 21-tool MCP server |
-
-```bash
-# Inspect CLI & Unicode U+2800 Braille TUI on ZothOS v3.4
-NullAI-HexStrike-AI-Terminal --help
-NullAI-HexStrike-AI-Terminal-tui --status
-NullAI-HexStrike-AI-Terminal-tui --json
-
-# Verify Second Brain Vault & 12-Step Verification Gallery on :8151
-zoth-obsidian-tracker --verify
-```
-
+MIT License. Copyright (c) 2026 1nc0gn30 (`@1nc0gn30`, [https://1nc0gn30.si](https://1nc0gn30.si)) & NullAI ([https://nullai.tech](https://nullai.tech)). See [LICENSE](LICENSE).
