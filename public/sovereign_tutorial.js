@@ -123,10 +123,7 @@
     document.getElementById(`sovCloseBtn-${toolId}`).addEventListener('click', closeModal);
     document.getElementById(`sovActionBtn-${toolId}`).addEventListener('click', closeModal);
 
-    // Auto-launch if not seen
-    if (!localStorage.getItem(`sov_tutorial_seen_${toolId}`)) {
-      setTimeout(openModal, 600);
-    }
+    // Auto-launch disabled so the workstation opens directly without blocking overlays.
 
     return {
       open: openModal,
